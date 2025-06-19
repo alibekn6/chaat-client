@@ -1,0 +1,84 @@
+@import "tailwindcss";
+:root {
+  --max-width: 1200px;
+  --border-radius: 12px;
+  --padding-x: 1rem;
+  --padding-y: 1rem;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+
+}
+
+#root {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--padding-y) var(--padding-x);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chat specific styles */
+.chat-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: white;
+  border-radius: var(--border-radius);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :root {
+    --padding-x: 0.5rem;
+    --padding-y: 0.5rem;
+  }
+  
+  .chat-container {
+    padding: 0.5rem;
+  }
+}
+
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 1.5s ease-in-out forwards;
+}
+
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
