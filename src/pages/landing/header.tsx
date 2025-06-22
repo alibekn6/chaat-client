@@ -1,11 +1,14 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const links = [
     { name: 'pricing', href: '#' },
-    { name: 'demo', href: '#' },
+    { name: 'demo', href: 'https://www.youtube.com/watch?v=vRB1MLGEHSc' },
     { name: 'social', href: '#' },
   ];
 
@@ -13,10 +16,10 @@ export const Header = () => {
     <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm z-50 border-b border-gray-100">
       <div className="container relative mx-auto px-4 max-w-[1200px]">
         <div className="flex items-center h-16 justify-between">
-          {/* Logo */}
-          <div className="text-2xl font-mono">chaat</div>
+          <Link to="/landing" className="text-2xl font-mono hover:opacity-80 transition-opacity">
+            chaat
+          </Link>
 
-          {/* Desktop nav */}
           <nav className="hidden md:flex flex-1 justify-center space-x-12">
             {links.map(({ name, href }) => (
               <a key={name} href={href} className="font-mono hover:underline text-lg">
@@ -25,17 +28,30 @@ export const Header = () => {
             ))}
           </nav>
 
-          {/* Desktop actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <a href="#" className="font-mono text-lg hover:underline">
-              sign in
-            </a>
-            <button className="bg-black text-white font-mono px-5 py-2">
-              Try for FREE
-            </button>
+            {isAuthenticated ? (
+              <Link to="/dashboard">
+                <button className="bg-black text-white font-mono px-5 py-2">
+                  Dashboard
+                </button>
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="font-mono text-lg hover:underline"
+                >
+                  sign in
+                </Link>
+                <Link to="/register">
+                  <button className="bg-black text-white font-mono px-5 py-2">
+                    Try for FREE
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
 
-          {/* Mobile menu button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden focus:outline-none"
@@ -73,19 +89,34 @@ export const Header = () => {
                 {name}
               </a>
             ))}
-            <a
-              href="#"
-              className="font-mono text-lg hover:underline px-4 py-2 w-full text-center"
-              onClick={() => setMenuOpen(false)}
-            >
-              sign in
-            </a>
-            <button
-              className="bg-black text-white font-mono px-5 py-2 w-11/12 rounded"
-              onClick={() => setMenuOpen(false)}
-            >
-              Try for FREE
-            </button>
+            {isAuthenticated ? (
+              <Link to="/dashboard">
+                <button
+                  className="bg-black text-white font-mono px-5 py-2 w-11/12 rounded"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Dashboard
+                </button>
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="font-mono text-lg hover:underline px-4 py-2 w-full text-center"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  sign in
+                </Link>
+                <Link to="/register">
+                  <button
+                    className="bg-black text-white font-mono px-5 py-2 w-11/12 rounded"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Try for FREE
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

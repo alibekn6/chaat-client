@@ -1,6 +1,6 @@
 export const Hero = () => {
   return (
-    <section className="min-h-screen flex items-start justify-center pt-50">
+    <section className="min-h-screen flex items-start justify-center pt-30">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <h1
@@ -26,7 +26,7 @@ export const Hero = () => {
                 animate-gradient
                 px-8 py-3 mt-10
                 transition-transform duration-300
-                hover:scale-105 active:scale-95
+                active:scale-95
               "
             >
               Get started for free

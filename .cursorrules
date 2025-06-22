@@ -30,6 +30,10 @@
    - Ensure it follows our existing component patterns
    - Add any necessary custom logic or state management
 
+8. Project Context: This project is an AI product that, based on key information about a client's business, automatically generates a chatbot that answers the business’s customer questions. The user supplies their business details once during onboarding; all components must capture, persist, and reuse this information so the user never has to repeat it elsewhere in the app.
+
+
+
 Example prompt template:
 "Create a React component named {ComponentName} using TypeScript and Tailwind CSS. It should {description of functionality}. Props should include {list of props with types}. The component should {any specific styling or behavior notes}. Please provide the full component code."
 

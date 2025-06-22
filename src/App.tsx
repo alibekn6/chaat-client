@@ -1,33 +1,45 @@
 import './App.css'
-import { Hero } from './pages/landing/hero'
-import { ChatMockup } from './pages/landing/chatmock'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { Header } from './pages/landing/header'
-import { PlatformOverview }  from './pages/landing/PlatformOverview'
-import { FeatureShowcase1 }  from './pages/landing/featureshowcase1'
-import { FeatureShowcase2 }  from './pages/landing/featureshowcase2'
-import { AIAgents }          from './pages/landing/aiagents'
-import { SocialProof }       from './pages/landing/socialproof'
-import { FinalCTA }          from './pages/landing/finalcta'
-import { Footer }            from './pages/landing/footer'
+import { LandingPage } from './pages/landing/LandingPage'
+import { Footer } from './pages/landing/footer'
+import { LoginPage } from './pages/auth/LoginPage'
+import { RegisterPage } from './pages/auth/RegisterPage'
+import { ProtectedRoute } from './routes/ProtectedRoute'
+import { useAuth } from './context/AuthContext'
+import { DashboardHomePage } from './pages/dashboard/DashboardHomePage'
+import { AgentDetailLayout } from './pages/dashboard/AgentDetailLayout'
+import { TextPage } from './pages/dashboard/TextPage'
+import { QAPage } from './pages/dashboard/QAPage'
 
 function App() {
-
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex flex-1 justify-between items-center pt-16">
-        <Hero />
-        <ChatMockup />
+      <main className="flex-grow pt-20">
+        <Routes>
+          <Route path="/" element={<Root />} />
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<DashboardHomePage />} />
+            <Route path="/dashboard/:agentId" element={<AgentDetailLayout />}>
+              <Route index element={<Navigate to="text" replace />} />
+              <Route path="text" element={<TextPage />} />
+              <Route path="qa" element={<QAPage />} />
+            </Route>
+          </Route>
+        </Routes>
       </main>
-      <PlatformOverview />
-      <FeatureShowcase1 />
-      <FeatureShowcase2 />
-      <AIAgents />
-      <SocialProof />
-      <FinalCTA />
       <Footer />
     </div>
   )
+}
+
+function Root() {
+  const { isAuthenticated } = useAuth()
+  return <Navigate to={isAuthenticated ? '/dashboard' : '/landing'} replace />
 }
 
 export default App
