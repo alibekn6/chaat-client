@@ -15,10 +15,10 @@ export function LoginPage() {
     setError(null);
     try {
       const response = await loginService({
-        username: email,
+        email,
         password,
       });
-      login(response.access_token);
+      login(response.access_token, response.refresh_token);
       navigate("/dashboard");
     } catch (err) {
       setError("Failed to login. Please check your credentials.");

@@ -20,7 +20,7 @@ export function RegisterPage() {
         password,
         full_name: fullName,
       })
-      login(response.access_token)
+      login(response.access_token, response.refresh_token)
       navigate('/dashboard')
     } catch (err) {
       setError('Failed to register. Please try again.')
@@ -99,4 +99,4 @@ export function RegisterPage() {
       </form>
     </div>
   )
-} 
+}

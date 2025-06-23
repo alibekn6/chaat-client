@@ -1,45 +1,55 @@
-import {
-  useParams,
-  Outlet,
-  NavLink,
-  Navigate,
-} from 'react-router-dom'
-import { agents } from './mock'
+import { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { botService } from '../../services/botService';
+import type { Bot } from '../../types/bot';
 
 export function AgentDetailLayout() {
-  const { agentId } = useParams<{ agentId: string }>()
-  const agent = agents.find((a) => a.id === agentId)
+  const { botId } = useParams<{ botId: string }>();
+  const [bot, setBot] = useState<Bot | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!agent) {
-    return <Navigate to="/dashboard" replace />
+  useEffect(() => {
+    if (botId) {
+      botService.getBotById(botId)
+        .then(data => {
+          setBot(data);
+        })
+        .catch(err => {
+          console.error(err);
+          setError('Failed to fetch bot details.');
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [botId]);
+
+  if (isLoading) {
+    return <div className="p-8">Loading bot details...</div>;
   }
 
-  const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
-    `px-4 py-2 rounded-md text-sm font-medium ${
-      isActive
-        ? 'bg-indigo-100 text-indigo-700'
-        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-    }`
+  if (error) {
+    return <div className="p-8 text-red-600">{error}</div>;
+  }
+
+  if (!bot) {
+    return <div className="p-8">Bot not found.</div>;
+  }
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-2">{agent.name}</h1>
-      <p className="text-gray-600 mb-6">{agent.description}</p>
-
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-4" aria-label="Tabs">
-          <NavLink to={`/dashboard/${agentId}/text`} className={navLinkClasses}>
-            Text
-          </NavLink>
-          <NavLink to={`/dashboard/${agentId}/qa`} className={navLinkClasses}>
-            Q&A
-          </NavLink>
-        </nav>
+      <div className="mb-4">
+        <Link to="/dashboard" className="text-blue-500 hover:underline">&larr; Back to Dashboard</Link>
       </div>
-
-      <div className="py-6">
-        <Outlet />
+      <h1 className="text-3xl font-bold mb-4">{bot.name}</h1>
+      <div className="bg-white p-6 rounded-lg shadow-md border">
+        <p className="mb-2"><span className="font-semibold">Description:</span> {bot.description}</p>
+        <p className="mb-2"><span className="font-semibold">Bot Name:</span> {bot.bot_name}</p>
+        <p className="mb-2"><span className="font-semibold">Greeting:</span> {bot.bot_greeting}</p>
+        <p><span className="font-semibold">Tonality:</span> {bot.bot_tonality}</p>
       </div>
+      {/* Future sections like knowledge base management can be added here */}
     </div>
-  )
+  );
 } 

@@ -1,6 +1,5 @@
-// src/components/ui/button.tsx
 import React, { type ButtonHTMLAttributes, type ReactNode } from 'react';
-import clsx from 'clsx';
+import { cn } from '../../lib/utils';
 
 export type ButtonVariant = 'default' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -32,7 +31,7 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <button
-      className={clsx(
+      className={cn(
         'font-mono rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],

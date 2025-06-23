@@ -14,15 +14,14 @@ export const register = async (
 }
 
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
-  const params = new URLSearchParams()
-  params.append('username', data.username)
-  params.append('password', data.password)
-  params.append('grant_type', 'password')
-
-  const response = await api.post('/auth/login', params, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-  })
+  const response = await api.post('/auth/login', data)
   return response.data
-} 
+}
+
+export const refreshToken = async (): Promise<LoginResponse> => {
+  const currentRefreshToken = localStorage.getItem('refreshToken');
+  const response = await api.post('/auth/refresh', {
+    refresh_token: currentRefreshToken,
+  });
+  return response.data;
+}; 

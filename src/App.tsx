@@ -9,8 +9,6 @@ import { ProtectedRoute } from './routes/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
 import { DashboardHomePage } from './pages/dashboard/DashboardHomePage'
 import { AgentDetailLayout } from './pages/dashboard/AgentDetailLayout'
-import { TextPage } from './pages/dashboard/TextPage'
-import { QAPage } from './pages/dashboard/QAPage'
 
 function App() {
   return (
@@ -24,11 +22,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<DashboardHomePage />} />
-            <Route path="/dashboard/:agentId" element={<AgentDetailLayout />}>
-              <Route index element={<Navigate to="text" replace />} />
-              <Route path="text" element={<TextPage />} />
-              <Route path="qa" element={<QAPage />} />
-            </Route>
+            <Route path="/dashboard/:botId" element={<AgentDetailLayout />} />
           </Route>
         </Routes>
       </main>

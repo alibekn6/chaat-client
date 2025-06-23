@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { Button } from '../../components/ui/button';
 
 export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
 
   const links = [
     { name: 'pricing', href: '#' },
@@ -30,11 +31,14 @@ export const Header = () => {
 
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
-              <Link to="/dashboard">
-                <button className="bg-black text-white font-mono px-5 py-2">
+              <>
+                <Link to="/dashboard" className="bg-black text-white font-mono px-5 py-2">
                   Dashboard
-                </button>
-              </Link>
+                </Link>
+                <Button onClick={logout} variant="outline">
+                  Logout
+                </Button>
+              </>
             ) : (
               <>
                 <Link
@@ -44,9 +48,7 @@ export const Header = () => {
                   sign in
                 </Link>
                 <Link to="/register">
-                  <button className="bg-black text-white font-mono px-5 py-2">
-                    Try for FREE
-                  </button>
+                  <Button>Try for FREE</Button>
                 </Link>
               </>
             )}
