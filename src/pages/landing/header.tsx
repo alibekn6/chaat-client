@@ -18,7 +18,7 @@ export const Header = () => {
       <div className="container relative mx-auto px-4 max-w-[1200px]">
         <div className="flex items-center h-16 justify-between">
           <Link to="/landing" className="text-2xl font-mono hover:opacity-80 transition-opacity">
-            chaat
+            reeply
           </Link>
 
           <nav className="hidden md:flex flex-1 justify-center space-x-12">
@@ -47,8 +47,8 @@ export const Header = () => {
                 >
                   sign in
                 </Link>
-                <Link to="/register">
-                  <Button>Try for FREE</Button>
+                <Link to="/register" className="bg-black text-white font-mono px-5 py-2">
+                  Try for FREE
                 </Link>
               </>
             )}

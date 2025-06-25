@@ -1,11 +1,29 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import type { Bot, CreateBotData } from '../../types/bot';
+import type { Bot, CreateBotData, UpdateBotData } from '../../types/bot';
 import { botService } from '../../services/botService';
 import { Button } from '../../components/ui/button';
-import { Card } from '../../components/ui/card';
+import { Card, CardContent } from '../../components/ui/card';
+import { Badge } from '../../components/ui/badge';
 import { Modal } from './bots/Modal';
 import { BotForm } from './bots/BotForm';
+
+// Helper to render status badges
+const StatusBadge = ({ status, is_running }: { status: Bot['status'], is_running: boolean }) => {
+  let color = 'bg-gray-500';
+  let text = status.charAt(0).toUpperCase() + status.slice(1);
+
+  if (is_running) {
+    color = 'bg-green-500';
+    text = 'Running';
+  } else if (status === 'generated' || status === 'stopped') {
+    color = 'bg-blue-500';
+  } else if (status === 'error') {
+    color = 'bg-red-500';
+  }
+  
+  return <Badge className={`${color} text-white`}>{text}</Badge>;
+};
 
 export function DashboardHomePage() {
   const [bots, setBots] = useState<Bot[]>([]);
@@ -48,13 +66,15 @@ export function DashboardHomePage() {
     setEditingBot(null);
   };
 
-  const handleSubmit = async (data: CreateBotData | Bot) => {
+  const handleSubmit = async (data: CreateBotData | UpdateBotData) => {
     setIsSubmitting(true);
     try {
-      if (editingBot && 'id' in data) {
-        await botService.updateBot(data.id, data);
+      if (editingBot) {
+        await botService.updateBot(editingBot.id, data as UpdateBotData);
       } else {
-        await botService.createBot(data as CreateBotData);
+        // The new flow: create the bot, then trigger generation
+        const newBot = await botService.createBot(data as CreateBotData);
+        await handleGenerate(newBot.id); // Auto-generate after creation
       }
       handleCloseModal();
       await loadBots();
@@ -66,7 +86,37 @@ export function DashboardHomePage() {
     }
   };
 
-  const handleDelete = async (botId: string) => {
+  const handleGenerate = async (botId: number) => {
+    try {
+      await botService.generateBotCode(botId);
+      await loadBots();
+    } catch (err) {
+      setError(`Failed to generate code for bot ${botId}.`);
+      console.error(err);
+    }
+  };
+
+  const handleDeploy = async (botId: number) => {
+    try {
+      await botService.deployBot(botId);
+      await loadBots();
+    } catch (err) {
+      setError(`Failed to deploy bot ${botId}.`);
+      console.error(err);
+    }
+  };
+
+  const handleStop = async (botId: number) => {
+    try {
+      await botService.stopBot(botId);
+      await loadBots();
+    } catch (err) {
+      setError(`Failed to stop bot ${botId}.`);
+      console.error(err);
+    }
+  };
+
+  const handleDelete = async (botId: number) => {
     if (window.confirm('Are you sure you want to delete this bot?')) {
       try {
         await botService.deleteBot(botId);
@@ -97,19 +147,35 @@ export function DashboardHomePage() {
           <Button onClick={handleOpenCreateModal} className="mt-4">Create Your First Bot</Button>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {bots.map((bot) => (
-            <Card key={bot.id} className="flex flex-col">
-              <Link to={`/dashboard/${bot.id}`} className="block hover:bg-gray-50 rounded-t-lg p-5">
-                <div className="p-4">
-                  <h2 className="text-lg font-bold">{bot.name}</h2>
-                  <p className="text-sm text-gray-600 truncate">{bot.description}</p>
+            <Card key={bot.id} className="flex flex-col justify-between hover:shadow-lg transition-shadow">
+              <Link to={`/dashboard/${bot.id}`} className="flex-grow">
+                <div className="p-4 border-b">
+                  <div className="flex justify-between items-start">
+                    <h2 className="text-lg font-bold">{bot.bot_name}</h2>
+                    <StatusBadge status={bot.status} is_running={bot.is_running} />
+                  </div>
+                  <p className="text-sm text-left text-gray-600 truncate mt-1">{bot.requirements}</p>
                 </div>
+                <CardContent className="pt-4">
+                  <div className="flex flex-col gap-2 text-sm">
+                    {bot.status === 'created' && (
+                      <Button onClick={(e) => { e.preventDefault(); handleGenerate(bot.id); }}>Generate Code</Button>
+                    )}
+                    {(bot.status === 'generated' || bot.status === 'stopped') && !bot.is_running && (
+                      <Button onClick={(e) => { e.preventDefault(); handleDeploy(bot.id); }}>Deploy</Button>
+                    )}
+                    {bot.is_running && (
+                      <Button variant="outline" onClick={(e) => { e.preventDefault(); handleStop(bot.id); }}>Stop</Button>
+                    )}
+                  </div>
+                </CardContent>
               </Link>
-                <div className="p-4 flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => handleOpenEditModal(bot)}>Edit</Button>
-                  <Button variant="outline" className="border-red-500 text-red-500 hover:bg-red-50" onClick={() => handleDelete(bot.id)}>Delete</Button>
-                </div>
+              <div className="p-4 border-t flex justify-end gap-2 bg-gray-50 rounded-b-lg">
+                <Button variant="outline" size="sm" onClick={() => handleOpenEditModal(bot)}>Edit</Button>
+                <Button variant="outline" size="sm" className="border-red-500 text-red-500 hover:bg-red-50" onClick={() => handleDelete(bot.id)}>Delete</Button>
+              </div>
             </Card>
           ))}
         </div>

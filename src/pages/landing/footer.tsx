@@ -4,7 +4,7 @@ export const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-5 gap-8 mb-12">
           <div className="md:col-span-2">
-            <div className="text-2xl font-bold mb-4">chaat</div>
+            <div className="text-2xl font-bold mb-4">reeply</div>
             <p className="text-gray-600 mb-6 max-w-md">
               The most powerful platform for creating intelligent social media bots
             </p>
@@ -36,7 +36,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-600 text-sm">&copy; 2025 chaat. All rights reserved.</p>
+          <p className="text-gray-600 text-sm">&copy; 2025 reeply. All rights reserved.</p>
           <div className="flex items-center space-x-6 mt-4 md:mt-0 text-gray-600 text-sm">
             {['Privacy Policy','Terms of Service','Cookie Policy'].map(text => (
               <a key={text} href="#" className="hover:text-gray-900 transition">{text}</a>

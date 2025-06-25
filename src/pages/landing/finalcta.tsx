@@ -9,7 +9,7 @@ export function FinalCTA() {
           Make customer experience your competitive edge
         </h2>
         <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-          Join thousands using chaat to automate interactions, increase bookings…
+          Join thousands using reeply to automate interactions, increase bookings…
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
           <Button size="lg" className="bg-gray-900 text-white hover:bg-gray-800 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200">

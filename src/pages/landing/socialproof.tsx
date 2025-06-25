@@ -16,7 +16,7 @@ export function SocialProof() {
               name: 'Sarah Johnson',
               role: 'CEO, TechStart',
               avatar: 'SJ',
-              quote: "chaat transformed our customer service…",
+              quote: "reeply transformed our customer service…",
               gradient: 'from-blue-950 via-blue-800 to-blue-600',
             },
             {
