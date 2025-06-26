@@ -8,7 +8,6 @@ import { Badge } from '../../components/ui/badge';
 import { Modal } from './bots/Modal';
 import { BotForm } from './bots/BotForm';
 
-// Helper to render status badges
 const StatusBadge = ({ status, is_running }: { status: Bot['status'], is_running: boolean }) => {
   let color = 'bg-gray-500';
   let text = status.charAt(0).toUpperCase() + status.slice(1);
@@ -68,13 +67,12 @@ export function DashboardHomePage() {
 
   const handleSubmit = async (data: CreateBotData | UpdateBotData) => {
     setIsSubmitting(true);
+    setError(null);
     try {
       if (editingBot) {
         await botService.updateBot(editingBot.id, data as UpdateBotData);
       } else {
-        // The new flow: create the bot, then trigger generation
-        const newBot = await botService.createBot(data as CreateBotData);
-        await handleGenerate(newBot.id); // Auto-generate after creation
+        await botService.createBot(data as CreateBotData);
       }
       handleCloseModal();
       await loadBots();
