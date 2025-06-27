@@ -2,7 +2,7 @@ import axios, { type AxiosError } from 'axios'
 import { refreshToken } from './authService'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: 'http://165.22.95.110:8000',
   headers: {
     'Content-Type': 'application/json',
   },
