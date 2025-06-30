@@ -54,3 +54,7 @@ storybook-static/
 
 # custom rules file
 .cursorrules
+# Environment files
+.env.local
+.env.production
+.env.development

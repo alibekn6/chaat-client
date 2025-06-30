@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Bot, CreateBotData, UpdateBotData } from '../../types/bot';
+import { BotType } from '../../types/bot';
 import { botService } from '../../services/botService';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
@@ -22,6 +23,15 @@ const StatusBadge = ({ status, is_running }: { status: Bot['status'], is_running
   }
   
   return <Badge className={`${color} text-white`}>{text}</Badge>;
+};
+
+const BotTypeBadge = ({ botType }: { botType: Bot['bot_type'] }) => {
+  const isQABot = botType === BotType.QA_KNOWLEDGE_BASE;
+  return (
+    <Badge className="text-xs bg-blue-100 text-blue-800">
+      {isQABot ? '📚 Q&A Bot' : '💬 Chat Bot'}
+    </Badge>
+  );
 };
 
 export function DashboardHomePage() {
@@ -65,14 +75,25 @@ export function DashboardHomePage() {
     setEditingBot(null);
   };
 
-  const handleSubmit = async (data: CreateBotData | UpdateBotData) => {
+  const handleSubmit = async (data: CreateBotData | UpdateBotData, file?: File | null) => {
     setIsSubmitting(true);
     setError(null);
     try {
+      let createdBot: Bot;
       if (editingBot) {
         await botService.updateBot(editingBot.id, data as UpdateBotData);
       } else {
-        await botService.createBot(data as CreateBotData);
+        createdBot = await botService.createBot(data as CreateBotData);
+        
+        // If this is a Q&A bot and a file was provided, upload it
+        if (file && (data as CreateBotData).bot_type === BotType.QA_KNOWLEDGE_BASE) {
+          try {
+            await botService.uploadKnowledgeBase(createdBot.id, file);
+          } catch (fileUploadError) {
+            console.error('Failed to upload knowledge base:', fileUploadError);
+            setError('Bot created successfully, but failed to upload knowledge base. You can upload it later from the bot details page.');
+          }
+        }
       }
       handleCloseModal();
       await loadBots();
@@ -150,16 +171,30 @@ export function DashboardHomePage() {
             <Card key={bot.id} className="flex flex-col justify-between hover:shadow-lg transition-shadow">
               <Link to={`/dashboard/${bot.id}`} className="flex-grow">
                 <div className="p-4 border-b">
-                  <div className="flex justify-between items-start">
+                  <div className="flex justify-between items-start mb-2">
                     <h2 className="text-lg font-bold">{bot.bot_name}</h2>
                     <StatusBadge status={bot.status} is_running={bot.is_running} />
                   </div>
-                  <p className="text-sm text-left text-gray-600 truncate mt-1">{bot.requirements}</p>
+                  <div className="mb-2">
+                    <BotTypeBadge botType={bot.bot_type} />
+                  </div>
+                  <p className="text-sm text-left text-gray-600 truncate">{bot.requirements}</p>
                 </div>
                 <CardContent className="pt-4">
                   <div className="flex flex-col gap-2 text-sm">
+                    {bot.bot_type === BotType.QA_KNOWLEDGE_BASE && bot.knowledge_base_status === 'empty' && (
+                      <p className="text-xs text-orange-600 mb-2">⚠️ Upload knowledge base first</p>
+                    )}
+                    {bot.bot_type === BotType.QA_KNOWLEDGE_BASE && bot.knowledge_base_status === 'processing' && (
+                      <p className="text-xs text-yellow-600 mb-2">📚 Processing knowledge base...</p>
+                    )}
                     {bot.status === 'created' && (
-                      <Button onClick={(e) => { e.preventDefault(); handleGenerate(bot.id); }}>Generate Code</Button>
+                      <Button 
+                        onClick={(e) => { e.preventDefault(); handleGenerate(bot.id); }}
+                        disabled={bot.bot_type === BotType.QA_KNOWLEDGE_BASE && bot.knowledge_base_status !== 'ready'}
+                      >
+                        Generate Code
+                      </Button>
                     )}
                     {(bot.status === 'generated' || bot.status === 'stopped') && !bot.is_running && (
                       <Button onClick={(e) => { e.preventDefault(); handleDeploy(bot.id); }}>Deploy</Button>

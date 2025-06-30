@@ -1,12 +1,16 @@
 import axios, { type AxiosError } from 'axios'
 import { refreshToken } from './authService'
+import { API_CONFIG } from '../config'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: API_CONFIG.BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 })
+
+// Show current API URL in console
+console.log('🌐 API Base URL:', API_CONFIG.BASE_URL);
 
 api.interceptors.request.use(
   (config) => {

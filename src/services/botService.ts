@@ -1,5 +1,5 @@
 import api from './api';
-import type { Bot, CreateBotData, UpdateBotData } from '../types/bot';
+import type { Bot, CreateBotData, UpdateBotData, KnowledgeBaseStatus } from '../types/bot';
 
 export const botService = {
   async getBots(): Promise<Bot[]> {
@@ -31,13 +31,30 @@ export const botService = {
     return response.data;
   },
 
-  async deployBot(botId: number): Promise<{ message: string }> {
-    const response = await api.post<{ message: string }>(`/ai/bots/${botId}/deploy`);
+  async deployBot(botId: number): Promise<Bot> {
+    const response = await api.post<Bot>(`/ai/bots/${botId}/deploy`);
     return response.data;
   },
 
-  async stopBot(botId: number): Promise<{ message: string }> {
-    const response = await api.post<{ message: string }>(`/ai/bots/${botId}/stop`);
+  async stopBot(botId: number): Promise<Bot> {
+    const response = await api.post<Bot>(`/ai/bots/${botId}/stop`);
+    return response.data;
+  },
+
+  async uploadKnowledgeBase(botId: number, file: File): Promise<{ message: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await api.post<{ message: string }>(`/ai/bots/${botId}/knowledge/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  async getKnowledgeBaseStatus(botId: number): Promise<KnowledgeBaseStatus> {
+    const response = await api.get<KnowledgeBaseStatus>(`/ai/bots/${botId}/knowledge/status`);
     return response.data;
   },
 }; 

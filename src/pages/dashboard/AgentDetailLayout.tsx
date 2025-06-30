@@ -4,10 +4,13 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { botService } from '../../services/botService';
 import type { Bot, UpdateBotData } from '../../types/bot';
+import { BotType } from '../../types/bot';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Modal } from './bots/Modal';
 import { BotForm } from './bots/BotForm';
+
+import { KnowledgeBaseManager } from './bots/KnowledgeBaseManager';
 
 // Helper for status badge, consistent with dashboard
 const StatusBadge = ({ status, is_running }: { status: Bot['status'], is_running: boolean }) => {
@@ -184,6 +187,12 @@ export function AgentDetailLayout() {
           isSubmitting={isSubmitting}
         />
       </Modal>
+
+      {bot.bot_type === BotType.QA_KNOWLEDGE_BASE && (
+        <div className="mt-6">
+          <KnowledgeBaseManager bot={bot} onBotUpdate={setBot} />
+        </div>
+      )}
     </>
   );
 } 

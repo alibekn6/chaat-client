@@ -17,12 +17,8 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
-    proxy: {
-      '/api': {
-        target: 'http://api:8000',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''), // Remove /api prefix before forwarding
-      },
-    },
+    // Removed proxy configuration - we handle API routing through environment variables
+    // Development: Direct connection to localhost:8000
+    // Production: nginx proxies /api to backend
   },
 })
