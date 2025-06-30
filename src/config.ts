@@ -1,6 +1,3 @@
-// API Configuration
-// Change this URL to switch between development and production
-
 export const API_CONFIG = {
   // For local development:
   BASE_URL: 'http://localhost:8000',
