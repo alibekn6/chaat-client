@@ -166,11 +166,11 @@ export function DashboardHomePage() {
           <Button onClick={handleOpenCreateModal} className="mt-4">Create Your First Bot</Button>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-2 md:px-0">
           {bots.map((bot) => (
-            <Card key={bot.id} className="flex flex-col justify-between hover:shadow-lg transition-shadow">
+            <Card key={bot.id} className="flex flex-col justify-between hover:shadow-lg transition-shadow w-full">
               <Link to={`/dashboard/${bot.id}`} className="flex-grow">
-                <div className="p-4 border-b">
+                <div className="p-3 md:p-4 border-b">
                   <div className="flex justify-between items-start mb-2">
                     <h2 className="text-lg font-bold">{bot.bot_name}</h2>
                     <StatusBadge status={bot.status} is_running={bot.is_running} />
@@ -180,7 +180,7 @@ export function DashboardHomePage() {
                   </div>
                   <p className="text-sm text-left text-gray-600 truncate">{bot.requirements}</p>
                 </div>
-                <CardContent className="pt-4">
+                <CardContent className="pt-3 md:pt-4 px-3 md:px-6">
                   <div className="flex flex-col gap-2 text-sm">
                     {bot.bot_type === BotType.QA_KNOWLEDGE_BASE && bot.knowledge_base_status === 'empty' && (
                       <p className="text-xs text-orange-600 mb-2">⚠️ Upload knowledge base first</p>
@@ -205,7 +205,7 @@ export function DashboardHomePage() {
                   </div>
                 </CardContent>
               </Link>
-              <div className="p-4 border-t flex justify-end gap-2 bg-gray-50 rounded-b-lg">
+              <div className="p-3 md:p-4 border-t flex justify-end gap-2 bg-gray-50 rounded-b-lg">
                 <Button variant="outline" size="sm" onClick={() => handleOpenEditModal(bot)}>Edit</Button>
                 <Button variant="outline" size="sm" className="border-red-500 text-red-500 hover:bg-red-50" onClick={() => handleDelete(bot.id)}>Delete</Button>
               </div>
