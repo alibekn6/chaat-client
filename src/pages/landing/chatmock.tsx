@@ -13,10 +13,10 @@ const messages: Msg[] = [
     content: (
       <>
         Hello, welcome to reeply, what can I help you with?
-        <div className="flex space-x-2 mt-2">
-          <button className="bg-blue-400 px-2 py-1 rounded text-sm">❓</button>
-          <button className="bg-blue-400 px-2 py-1 rounded text-sm">🗺️</button>
-          <button className="bg-blue-400 px-2 py-1 rounded text-sm">💬</button>
+        <div className="flex space-x-2 mt-3">
+          <button className="bg-blue-400 px-3 py-2 rounded text-sm">❓</button>
+          <button className="bg-blue-400 px-3 py-2 rounded text-sm">🗺️</button>
+          <button className="bg-blue-400 px-3 py-2 rounded text-sm">💬</button>
         </div>
       </>
     ),
@@ -43,7 +43,7 @@ const Bubble = ({
   children: ReactNode;
   from: "bot" | "user";
 }) => {
-  const base = "relative px-3 pt-2 pb-5 text-sm max-w-[280px]";
+  const base = "relative px-5 pt-2 pb-6 text-sm max-w-[280px]";
   const isBot = from === "bot";
   return (
     <div className={`flex ${isBot ? "justify-start" : "justify-end"}`}>
