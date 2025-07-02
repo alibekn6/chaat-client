@@ -137,7 +137,15 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
           placeholder="Paste your token from BotFather" 
         />
         <p className="text-sm text-muted-foreground">
-          Get your token by creating a bot with @BotFather on Telegram
+          Get your token by creating a bot with @BotFather on Telegram.{' '}
+          <a 
+            href="https://youtu.be/tPVdosq1OUs" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-700 underline"
+          >
+            Watch tutorial
+          </a>
         </p>
       </div>
 
