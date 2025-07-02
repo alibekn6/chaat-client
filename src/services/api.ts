@@ -9,7 +9,6 @@ const api = axios.create({
   },
 })
 
-// Show current API URL in console
 console.log('🌐 API Base URL:', API_CONFIG.BASE_URL);
 
 api.interceptors.request.use(

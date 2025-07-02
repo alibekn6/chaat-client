@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { login as loginService } from "../../services/authService";
+import { Button } from '../../components/ui/button';
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex justify-center items-center flex-grow">
+    <div className="flex justify-center items-center flex-grow mb-45 mt-30">
       <form
         onSubmit={handleSubmit}
         className="p-8 bg-white shadow-md rounded-lg"
@@ -66,12 +67,12 @@ export function LoginPage() {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </div>
-        <button
+        <Button
           type="submit"
-          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium"
         >
           Login
-        </button>
+        </Button>
         <p className="mt-4 text-center text-sm text-gray-600">
           Don't have an account?{" "}
           <Link

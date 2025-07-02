@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/button';
@@ -7,10 +7,28 @@ export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (menuOpen && target && !target.closest('[data-menu]')) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [menuOpen]);
+
   const links = [
     { name: 'pricing', href: '#' },
-    { name: 'demo', href: 'https://www.youtube.com/watch?v=vRB1MLGEHSc' },
-    { name: 'social', href: '#' },
+    { name: 'demo', href: 'https://youtu.be/tPVdosq1OUs' },
+    { name: 'social', href: 'https://www.instagram.com/reeply.ai' },
   ];
 
   return (
@@ -58,6 +76,7 @@ export const Header = () => {
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden focus:outline-none"
             aria-label="Toggle menu"
+            data-menu
           >
             {!menuOpen ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,13 +92,13 @@ export const Header = () => {
       </div>
       {/* Mobile menu overlay and panel */}
       {menuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMenuOpen(false)}>
+        <div className="fixed inset-0 z-40 md:hidden">
           {/* semi-transparent background */}
           <div className="absolute inset-0 bg-black/40" />
           {/* menu panel */}
           <div
             className="fixed top-16 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50 flex flex-col items-center py-2 space-y-2 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-lg"
-            onClick={e => e.stopPropagation()}
+            data-menu
           >
             {links.map(({ name, href }) => (
               <a
@@ -92,14 +111,25 @@ export const Header = () => {
               </a>
             ))}
             {isAuthenticated ? (
-              <Link to="/dashboard">
+              <>
+                <Link to="/dashboard">
+                  <button
+                    className="bg-black text-white font-mono px-5 py-2 w-11/12 rounded"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Dashboard
+                  </button>
+                </Link>
                 <button
-                  className="bg-black text-white font-mono px-5 py-2 w-11/12 rounded"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={() => {
+                    logout();
+                    setMenuOpen(false);
+                  }}
+                  className="border border-black text-black font-mono px-5 py-2 w-11/12 rounded hover:bg-gray-100"
                 >
-                  Dashboard
+                  Logout
                 </button>
-              </Link>
+              </>
             ) : (
               <>
                 <Link

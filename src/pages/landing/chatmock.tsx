@@ -12,37 +12,28 @@ const messages: Msg[] = [
     from: "bot",
     content: (
       <>
-        Hello, welcome to AI generated bot, what can I help you with?
+        Hello, welcome to reeply, what can I help you with?
         <div className="flex space-x-2 mt-2">
-          <button className="bg-blue-400 px-2 py-1 rounded">🏷️</button>
-          <button className="bg-blue-400 px-2 py-1 rounded">🗺️</button>
-          <button className="bg-blue-400 px-2 py-1 rounded">☎️</button>
+          <button className="bg-blue-400 px-2 py-1 rounded text-sm">❓</button>
+          <button className="bg-blue-400 px-2 py-1 rounded text-sm">🗺️</button>
+          <button className="bg-blue-400 px-2 py-1 rounded text-sm">💬</button>
         </div>
       </>
     ),
   },
-  { from: "user", content: "🗺️ location" },
+  { from: "user", content: "❓ what is reeply?" },
   {
     from: "bot",
     content: (
       <>
-        🗺️ We are located in Satbayeva 22
-        <br />
-        <a
-          href="https://go.2gis.com/oXHPl"
-          target="_blank"
-          rel="noopener"
-          className="underline"
-        >
-          https://go.2gis.com/oXHPl
-        </a>
+         ❓ Reeply is a platform for creating telegram bots.
       </>
     ),
   },
-  { from: "user", content: " phone number" },
+  { from: "user", content: "💬 how to create a bot?" },
   {
     from: "bot",
-    content: <>Phone number 87056146518</>,
+    content: <>Check this video <a className="underline text-blue-500" href="https://youtu.be/tPVdosq1OUs" target="_blank" rel="noopener noreferrer">here</a> </>,
   },
 ];
 const Bubble = ({
@@ -52,7 +43,7 @@ const Bubble = ({
   children: ReactNode;
   from: "bot" | "user";
 }) => {
-  const base = "relative px-4 pt-2 pb-5 text-sm max-w-xs";
+  const base = "relative px-3 pt-2 pb-5 text-sm max-w-[280px]";
   const isBot = from === "bot";
   return (
     <div className={`flex ${isBot ? "justify-start" : "justify-end"}`}>
@@ -79,7 +70,7 @@ const Bubble = ({
 
 export const ChatMockup = () => {
   return (
-    <div className="chat-container max-w-xs mx-auto space-y-3">
+    <div className="chat-container w-full max-w-[320px] lg:max-w-[300px] mx-auto space-y-3 px-4 lg:px-0">
       {messages.map((msg, i) => (
         <div
           key={i}

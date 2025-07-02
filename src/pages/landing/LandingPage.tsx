@@ -10,9 +10,22 @@ import { FinalCTA } from './finalcta'
 export function LandingPage() {
   return (
     <>
-      <div className="flex flex-1 justify-between items-start pt-8">
-        <Hero />
-        <ChatMockup />
+      {/* Mobile Layout - ChatMockup first, then Hero */}
+      <div className="block lg:hidden">
+        <div className="pt-8 space-y-8">
+          <ChatMockup />
+          <Hero />
+        </div>
+      </div>
+
+      {/* Desktop/Laptop Layout - Keep original design */}
+      <div className="hidden lg:flex lg:flex-1 lg:justify-between lg:items-start lg:pt-8">
+        <div className="flex-1 pr-8">
+          <Hero />
+        </div>
+        <div className="flex-shrink-0">
+          <ChatMockup />
+        </div>
       </div>
       <PlatformOverview />
       <FeatureShowcase1 />
