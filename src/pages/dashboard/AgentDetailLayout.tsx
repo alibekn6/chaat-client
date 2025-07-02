@@ -36,6 +36,7 @@ export function AgentDetailLayout() {
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCodeVisible, setIsCodeVisible] = useState(false);
 
   const fetchBot = () => {
     if (!botId) return;
@@ -168,11 +169,47 @@ export function AgentDetailLayout() {
         </div>
         
         <div>
-          <h2 className="text-2xl font-semibold mb-4">Generated Code</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold">Generated Code</h2>
+            {bot.generated_code && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setIsCodeVisible(!isCodeVisible)}
+                className="flex items-center gap-2"
+              >
+                {isCodeVisible ? (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                    Hide Code
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                    Show Code
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
+          
           {bot.generated_code ? (
-            <SyntaxHighlighter language="python" style={vscDarkPlus} showLineNumbers>
-              {bot.generated_code}
-            </SyntaxHighlighter>
+            isCodeVisible ? (
+              <SyntaxHighlighter language="python" style={vscDarkPlus} showLineNumbers>
+                {bot.generated_code}
+              </SyntaxHighlighter>
+            ) : (
+              <div className="bg-gray-100 border rounded-lg p-6 text-center text-gray-500">
+                <svg className="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <p>Click "Show Code" to view the generated code</p>
+              </div>
+            )
           ) : (
             <p className="text-gray-500">Code has not been generated for this bot yet.</p>
           )}
