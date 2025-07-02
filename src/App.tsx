@@ -9,10 +9,12 @@ import { ProtectedRoute } from './routes/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
 import { DashboardHomePage } from './pages/dashboard/DashboardHomePage'
 import { AgentDetailLayout } from './pages/dashboard/AgentDetailLayout'
+import { ScrollToTop } from './components/ScrollToTop'
 
 function App() {
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       <Header />
       <main className="flex-grow pt-20">
         <Routes>
