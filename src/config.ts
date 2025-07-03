@@ -3,5 +3,5 @@ export const API_CONFIG = {
   BASE_URL: 'http://localhost:8000',
   
   // For production, change to:
-  // BASE_URL: 'http://165.22.95.110:80',
+  // BASE_URL: 'https://reeply.works',
 }; 
