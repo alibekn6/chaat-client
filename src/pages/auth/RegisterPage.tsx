@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
+import { Link } from 'react-router-dom'
 import { register } from '../../services/authService'
 import { Button } from '../../components/ui/button'
 
@@ -9,26 +8,92 @@ export function RegisterPage() {
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const navigate = useNavigate()
-  const { login } = useAuth()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [registrationSuccess, setRegistrationSuccess] = useState(false)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
+    
+    // Basic validation
+    if (!fullName.trim() || fullName.trim().length < 2) {
+      setError('Full name must be at least 2 characters long')
+      return
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address')
+      return
+    }
+    
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long')
+      return
+    }
+    
+    setIsSubmitting(true)
+    
     try {
-      const response = await register({
+      await register({
         email,
         password,
         full_name: fullName,
       })
-      login(response.access_token, response.refresh_token)
-      navigate('/dashboard')
+      
+      setRegistrationSuccess(true)
+      
     } catch (err) {
       setError('Failed to register. Please try again.')
       console.error(err)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
+  // Success state - show email verification message
+  if (registrationSuccess) {
+    return (
+      <div className="flex justify-center items-center flex-grow mb-40 mt-20">
+        <div className="p-8 bg-white shadow-md rounded-lg max-w-md">
+          <div className="text-center">
+            <div className="mx-auto mb-4 h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
+              <svg className="h-6 w-6 text-black-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold font-mono text-gray-900 mb-3">
+              Registration Successful!
+            </h2>
+            <p className="text-gray-600 font-mono mb-4">
+              We sent a confirmation email to:
+            </p>
+            <p className="font-medium font-mono text-blue-600 mb-4">
+              {email}
+            </p>
+            <div className="bg-gray-50 border border-blue-200 rounded-md p-3 mb-4">
+              <p className="text-sm font-mono text-black-700">
+                📧 Check your email and click the link to activate your account.
+              </p>
+            </div>
+            <div className="text-xs font-mono text-gray-500 mb-4">
+              Didn't receive the email? Check your "Spam" folder or try registering again.
+            </div>
+            
+            <Link 
+              to="/login" 
+              className="w-full inline-block bg-black text-white font-mono py-2 px-4 hover:bg-gray-700 transition-colors text-center"
+            >
+              Back to Login
+              {/* bg-black text-white font-mono px-5 py-2 */}
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Registration form
   return (
     <div className="flex justify-center items-center flex-grow mb-40 mt-20">
       <form
@@ -50,7 +115,10 @@ export function RegisterPage() {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            minLength={2}
+            disabled={isSubmitting}
+            placeholder="Enter your full name"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100"
           />
         </div>
         <div className="mb-4">
@@ -66,7 +134,11 @@ export function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            disabled={isSubmitting}
+            placeholder="example@email.com"
+            pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+            title="Please enter a valid email address"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100"
           />
         </div>
         <div className="mb-6">
@@ -82,14 +154,19 @@ export function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            minLength={8}
+            disabled={isSubmitting}
+            placeholder="At least 8 characters"
+            title="Password must be at least 8 characters long"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100"
           />
         </div>
         <Button
           type="submit"
+          disabled={isSubmitting}
           className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium"
         >
-          Register
+          {isSubmitting ? 'Registering...' : 'Register'}
         </Button>
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{' '}

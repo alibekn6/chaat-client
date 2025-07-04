@@ -1,29 +1,46 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Button } from '../../components/ui/button';
+import { getCurrentUser } from '../../services/authService';
 
 export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const { isAuthenticated, user, logout, login } = useAuth();
 
-  // Close menu when clicking outside
+  // Fetch user data if authenticated but no user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (isAuthenticated && !user) {
+        try {
+          const userData = await getCurrentUser();
+          login(localStorage.getItem('token')!, localStorage.getItem('refreshToken')!, userData);
+        } catch (error) {
+          console.error('Failed to fetch user data:', error);
+        }
+      }
+    };
+    fetchUserData();
+  }, [isAuthenticated, user, login]);
+
+  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      if (menuOpen && target && !target.closest('[data-menu]')) {
+      if ((menuOpen || userDropdownOpen) && target && !target.closest('[data-menu]')) {
         setMenuOpen(false);
+        setUserDropdownOpen(false);
       }
     };
 
-    if (menuOpen) {
+    if (menuOpen || userDropdownOpen) {
       document.addEventListener('click', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [menuOpen]);
+  }, [menuOpen, userDropdownOpen]);
 
   const links = [
     { name: 'pricing', href: '#' },
@@ -53,9 +70,41 @@ export const Header = () => {
                 <Link to="/dashboard" className="bg-black text-white font-mono px-5 py-2">
                   Dashboard
                 </Link>
-                <Button onClick={logout} variant="outline">
-                  Logout
-                </Button>
+                {/* User Dropdown - Desktop Only */}
+                <div className="relative" data-menu>
+                  <button
+                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                    className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </button>
+                  
+                  {userDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <p className="font-mono font-medium text-gray-900">
+                          {user?.full_name || 'User'}
+                        </p>
+                        <p className="font-mono text-sm text-gray-500">
+                          {user?.email || 'user@example.com'}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setUserDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left font-mono text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <>
@@ -97,7 +146,7 @@ export const Header = () => {
           <div className="absolute inset-0 bg-black/40" />
           {/* menu panel */}
           <div
-            className="fixed top-16 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50 flex flex-col items-center py-2 space-y-2 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-lg"
+            className="fixed top-16 left-0 right-0 bg-white border-b border-gray-100 z-50 flex flex-col items-center py-2 space-y-2 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-lg"
             data-menu
           >
             {links.map(({ name, href }) => (
@@ -120,15 +169,25 @@ export const Header = () => {
                     Dashboard
                   </button>
                 </Link>
-                <button
-                  onClick={() => {
-                    logout();
-                    setMenuOpen(false);
-                  }}
-                  className="border border-black text-black font-mono px-5 py-2 w-11/12 rounded hover:bg-gray-100"
-                >
-                  Logout
-                </button>
+                
+                {/* Mobile User Info - Text Only */}
+                <div className="w-11/12 text-center">
+                  <p className="font-mono font-medium text-gray-900 text-lg mb-1">
+                    {user?.full_name || 'User'}
+                  </p>
+                  <p className="font-mono text-sm text-gray-500 mb-4">
+                    {user?.email || 'user@example.com'}
+                  </p>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setMenuOpen(false);
+                    }}
+                    className="border border-black text-black font-mono px-5 py-2 w-full rounded hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
               </>
             ) : (
               <>

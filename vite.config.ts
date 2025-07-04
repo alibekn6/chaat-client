@@ -22,4 +22,39 @@ export default defineConfig({
     // Development: Direct connection to localhost:8000
     // Production: nginx proxies /api to backend
   },
+  // Оптимизация для production build
+  build: {
+    // Увеличиваем chunk warning лимит
+    chunkSizeWarningLimit: 1600,
+    rollupOptions: {
+      output: {
+        // Настройка manual chunks для оптимизации
+        manualChunks: {
+          // Vendor chunk - все node_modules
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          // UI components chunk
+          ui: ['@radix-ui/react-label', 'lucide-react', 'class-variance-authority', 'clsx', 'tailwind-merge'],
+          // Utils chunk
+          utils: ['axios'],
+          // Syntax highlighter отдельно (довольно тяжелый)
+          syntax: ['react-syntax-highlighter']
+        }
+      }
+    },
+    // Минификация
+    minify: 'terser',
+    // Оптимизация CSS
+    cssMinify: true,
+    // Source maps только для production debug
+    sourcemap: false,
+    // Оптимизация размера
+    target: 'esnext',
+    // Удаление console.log в production
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+  },
 })

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { lazy, Suspense } from 'react';
 import { botService } from '../../services/botService';
 import type { Bot, UpdateBotData } from '../../types/bot';
 import { BotType } from '../../types/bot';
@@ -9,8 +8,44 @@ import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Modal } from './bots/Modal';
 import { BotForm } from './bots/BotForm';
-
 import { KnowledgeBaseManager } from './bots/KnowledgeBaseManager';
+
+// Lazy load SyntaxHighlighter только когда нужно
+const SyntaxHighlighter = lazy(() => 
+  import('react-syntax-highlighter').then(module => ({
+    default: module.Prism
+  }))
+);
+
+// Lazy load style для SyntaxHighlighter
+const syntaxStyle = import('react-syntax-highlighter/dist/esm/styles/prism').then(module => module.vscDarkPlus);
+
+// Loading компонент для кода
+const CodeLoader = () => (
+  <div className="bg-gray-900 rounded-lg p-4 text-center">
+    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mx-auto mb-2"></div>
+    <p className="text-white text-sm">Loading code...</p>
+  </div>
+);
+
+// Компонент для рендера кода
+const CodeRenderer = ({ code }: { code: string }) => {
+  const [style, setStyle] = useState<{ [key: string]: React.CSSProperties } | null>(null);
+
+  useEffect(() => {
+    syntaxStyle.then(setStyle);
+  }, []);
+
+  return (
+    <SyntaxHighlighter 
+      language="python" 
+      style={style || {}} 
+      showLineNumbers
+    >
+      {code}
+    </SyntaxHighlighter>
+  );
+};
 
 // Helper for status badge, consistent with dashboard
 const StatusBadge = ({ status, is_running }: { status: Bot['status'], is_running: boolean }) => {
@@ -31,205 +66,229 @@ export function AgentDetailLayout() {
   const { botId } = useParams<{ botId: string }>();
   const navigate = useNavigate();
   const [bot, setBot] = useState<Bot | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isActionLoading, setIsActionLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCodeVisible, setIsCodeVisible] = useState(false);
 
-  const fetchBot = () => {
-    if (!botId) return;
-    botService.getBotById(parseInt(botId, 10))
-      .then(setBot)
-      .catch(err => {
-        console.error(err);
-        setError('Failed to fetch bot details.');
-      })
-      .finally(() => setIsLoading(false));
-  };
-
   useEffect(() => {
+    const fetchBot = async () => {
+      if (!botId) return;
+      
+      try {
+        setLoading(true);
+        const fetchedBot = await botService.getBotById(parseInt(botId));
+        setBot(fetchedBot);
+      } catch (err) {
+        console.error('Error fetching bot:', err);
+        setError('Failed to load bot details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchBot();
   }, [botId]);
 
-  const handleGenerate = async () => {
-    if (!bot) return;
-    setIsActionLoading(true);
-    try {
-      await botService.generateBotCode(bot.id);
-      fetchBot();
-    } catch (err) {
-      console.error('Failed to generate code:', err);
-      setError('Failed to generate code for the bot. Please try again.');
-    } finally {
-      setIsActionLoading(false);
-    }
-  };
-
-  const handleDeploy = async () => {
-    if (!bot) return;
-    setIsActionLoading(true);
-    try {
-      await botService.deployBot(bot.id);
-      fetchBot();
-    } catch (err) {
-      console.error('Failed to deploy bot:', err);
-      setError('Failed to deploy the bot. Please try again.');
-    } finally {
-      setIsActionLoading(false);
-    }
-  };
-
-  const handleStop = async () => {
-    if (!bot) return;
-    setIsActionLoading(true);
-    try {
-      await botService.stopBot(bot.id);
-      fetchBot();
-    } catch (err) {
-      console.error('Failed to stop bot:', err);
-      setError('Failed to stop the bot. Please try again.');
-    } finally {
-      setIsActionLoading(false);
-    }
-  };
-
   const handleUpdate = async (data: UpdateBotData) => {
     if (!bot) return;
-    setIsSubmitting(true);
-    setError(null);
+    
     try {
-      await botService.updateBot(bot.id, data);
+      setIsSubmitting(true);
+      const updatedBot = await botService.updateBot(bot.id, data);
+      setBot(updatedBot);
       setIsModalOpen(false);
-      fetchBot();
     } catch (err) {
-      console.error('Failed to update bot', err);
-      setError('Failed to update bot. Please try again.');
+      console.error('Error updating bot:', err);
+      throw err;
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDelete = async () => {
+  const handleGenerate = async () => {
     if (!bot) return;
-    if (window.confirm(`Are you sure you want to delete the bot "${bot.bot_name}"?`)) {
-      try {
-        await botService.deleteBot(bot.id);
-        navigate('/dashboard');
-      } catch (err) {
-        console.error('Failed to delete bot:', err);
-        setError('Failed to delete the bot. Please try again.');
-      }
+    
+    try {
+      setIsSubmitting(true);
+      await botService.generateBotCode(bot.id);
+      const updatedBot = await botService.getBotById(bot.id);
+      setBot(updatedBot);
+    } catch (err) {
+      console.error('Error generating bot:', err);
+      alert('Failed to generate bot. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  if (isLoading) return <div className="p-8">Loading bot details...</div>;
-  if (error) return <div className="p-8 text-red-600">{error}</div>;
-  if (!bot) return <div className="p-8">Bot not found.</div>;
+  const handleToggleBot = async () => {
+    if (!bot) return;
+    
+    try {
+      setIsSubmitting(true);
+      if (bot.is_running) {
+        await botService.stopBot(bot.id);
+      } else {
+        await botService.deployBot(bot.id);
+      }
+      const updatedBot = await botService.getBotById(bot.id);
+      setBot(updatedBot);
+    } catch (err) {
+      console.error('Error toggling bot:', err);
+      alert('Failed to toggle bot. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteBot = async () => {
+    if (!bot) return;
+    
+    const confirmed = window.confirm('Are you sure you want to delete this bot? This action cannot be undone.');
+    if (!confirmed) return;
+    
+    try {
+      setIsSubmitting(true);
+      await botService.deleteBot(bot.id);
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Error deleting bot:', err);
+      alert('Failed to delete bot. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error || !bot) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Error</h2>
+          <p className="text-gray-600 mb-4">{error || 'Bot not found'}</p>
+          <Link to="/dashboard" className="text-blue-600 hover:underline">
+            Back to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-      <div className="p-8 max-w-4xl mx-auto">
-        <div className="mb-6">
-          <Link to="/dashboard" className="text-blue-500 hover:underline">&larr; Back to Dashboard</Link>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow-md border flex flex-col mb-6">
-          <div className="p-6 mb-auto">
-            <div className="flex justify-between items-start mb-4">
-              <h1 className="text-3xl font-bold flex-grow">{bot.bot_name}</h1>
-              <div className="flex items-center gap-4">
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">{bot.bot_name}</h1>
+                <p className="text-gray-600 mt-1">{bot.requirements}</p>
+              </div>
+              <div className="flex items-center space-x-2">
                 <StatusBadge status={bot.status} is_running={bot.is_running} />
-                {bot.status === 'created' && (
-                  <Button onClick={handleGenerate} disabled={isActionLoading}>
-                    {isActionLoading ? 'Generating...' : 'Generate Code'}
-                  </Button>
-                )}
-                {(bot.status === 'generated' || bot.status === 'stopped') && !bot.is_running && (
-                  <Button onClick={handleDeploy} disabled={isActionLoading}>
-                    {isActionLoading ? 'Deploying...' : 'Deploy'}
-                  </Button>
-                )}
-                {bot.is_running && (
-                  <Button variant="outline" onClick={handleStop} disabled={isActionLoading}>
-                    {isActionLoading ? 'Stopping...' : 'Stop'}
-                  </Button>
-                )}
+                <Badge className="bg-gray-100 text-gray-700">
+                  {bot.bot_type === BotType.SIMPLE_CHAT ? 'Conversational' : 'Q&A Knowledge Base'}
+                </Badge>
               </div>
             </div>
-            {error && isActionLoading && <p className="text-red-500 text-sm mb-4">{error}</p>}
-            <p className="mb-2"><span className="font-semibold">Requirements:</span> {bot.requirements}</p>
-            <p className="text-sm text-gray-500"><span className="font-semibold">Token:</span> {bot.bot_token.substring(0, 12)}...</p>
-          </div>
-          <div className="p-4 border-t bg-gray-50 flex justify-end gap-2 rounded-b-lg">
-            <Button variant="outline" size="sm" onClick={() => setIsModalOpen(true)}>Edit</Button>
-            <Button variant="outline" size="sm" className="border-red-500 text-red-500 hover:bg-red-50" onClick={handleDelete}>Delete</Button>
-          </div>
-        </div>
-        
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold">Generated Code</h2>
-            {bot.generated_code && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setIsCodeVisible(!isCodeVisible)}
-                className="flex items-center gap-2"
-              >
-                {isCodeVisible ? (
-                  <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                    Hide Code
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                    Show Code
-                  </>
-                )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-2">Requirements</h3>
+                <p className="text-gray-600 text-sm">{bot.requirements}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-2">Bot Token</h3>
+                <p className="text-gray-600 text-sm font-mono">
+                  {bot.bot_token ? '••••••••' + bot.bot_token.slice(-6) : 'Not set'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2 mb-6">
+              <Button onClick={() => setIsModalOpen(true)} disabled={isSubmitting}>
+                Edit Bot
               </Button>
+              <Button 
+                onClick={handleGenerate} 
+                disabled={isSubmitting || !bot.bot_token}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {isSubmitting ? 'Generating...' : 'Generate Code'}
+              </Button>
+              <Button 
+                onClick={handleToggleBot} 
+                disabled={isSubmitting || bot.status !== 'generated'}
+                className={bot.is_running ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'}
+              >
+                {isSubmitting ? 'Processing...' : bot.is_running ? 'Stop Bot' : 'Start Bot'}
+              </Button>
+              <Button 
+                onClick={handleDeleteBot} 
+                disabled={isSubmitting}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Delete Bot
+              </Button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-900">Generated Code</h2>
+              {bot.generated_code && (
+                <Button 
+                  onClick={() => setIsCodeVisible(!isCodeVisible)}
+                  className="bg-gray-600 hover:bg-gray-700"
+                >
+                  {isCodeVisible ? 'Hide Code' : 'Show Code'}
+                </Button>
+              )}
+            </div>
+
+            {bot.generated_code ? (
+              isCodeVisible ? (
+                <Suspense fallback={<CodeLoader />}>
+                  <CodeRenderer code={bot.generated_code} />
+                </Suspense>
+              ) : (
+                <div className="bg-gray-100 border rounded-lg p-6 text-center text-gray-500">
+                  <svg className="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                  <p>Click "Show Code" to view the generated code</p>
+                </div>
+              )
+            ) : (
+              <p className="text-gray-500">Code has not been generated for this bot yet.</p>
             )}
           </div>
-          
-          {bot.generated_code ? (
-            isCodeVisible ? (
-              <SyntaxHighlighter language="python" style={vscDarkPlus} showLineNumbers>
-                {bot.generated_code}
-              </SyntaxHighlighter>
-            ) : (
-              <div className="bg-gray-100 border rounded-lg p-6 text-center text-gray-500">
-                <svg className="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-                <p>Click "Show Code" to view the generated code</p>
-              </div>
-            )
-          ) : (
-            <p className="text-gray-500">Code has not been generated for this bot yet.</p>
-          )}
         </div>
+
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <BotForm 
+            initialData={bot}
+            onSubmit={handleUpdate}
+            onCancel={() => setIsModalOpen(false)}
+            isSubmitting={isSubmitting}
+          />
+        </Modal>
+
+        {bot.bot_type === BotType.QA_KNOWLEDGE_BASE && (
+          <div className="max-w-4xl mx-auto px-4 mt-6">
+            <KnowledgeBaseManager bot={bot} onBotUpdate={setBot} />
+          </div>
+        )}
       </div>
-
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <BotForm 
-          initialData={bot}
-          onSubmit={handleUpdate}
-          onCancel={() => setIsModalOpen(false)}
-          isSubmitting={isSubmitting}
-        />
-      </Modal>
-
-      {bot.bot_type === BotType.QA_KNOWLEDGE_BASE && (
-        <div className="mt-6">
-          <KnowledgeBaseManager bot={bot} onBotUpdate={setBot} />
-        </div>
-      )}
     </>
   );
 } 
