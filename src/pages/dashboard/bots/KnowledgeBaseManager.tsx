@@ -110,9 +110,9 @@ export function KnowledgeBaseManager({ bot, onBotUpdate }: KnowledgeBaseManagerP
   }
 
   return (
-    <Card className="p-6">
+    <Card className="p-4 md:p-8">
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
           <h3 className="text-lg font-semibold">Knowledge Base</h3>
           {status && (
             <Badge className={STATUS_COLORS[status.knowledge_base_status]}>
@@ -121,23 +121,23 @@ export function KnowledgeBaseManager({ bot, onBotUpdate }: KnowledgeBaseManagerP
           )}
         </div>
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground leading-relaxed">
           Upload PDF documents that your bot should use to answer questions. The bot will only answer questions based on the content of these documents.
         </p>
 
         <div className="space-y-4">
           <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="knowledge_file">Upload PDF File</Label>
+            <Label htmlFor="knowledge_file" className="text-sm font-medium">Upload PDF File</Label>
             <Input 
               type="file" 
               id="knowledge_file" 
               accept=".pdf"
               onChange={handleFileChange}
               disabled={isUploading || status?.knowledge_base_status === 'processing'}
-              className="file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/80"
+              className="file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs md:file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/80"
             />
             {selectedFile && (
-              <p className="text-sm text-green-600">
+              <p className="text-xs md:text-sm text-green-600 break-words">
                 Selected: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
               </p>
             )}
@@ -146,7 +146,8 @@ export function KnowledgeBaseManager({ bot, onBotUpdate }: KnowledgeBaseManagerP
           <Button 
             onClick={handleUpload} 
             disabled={!selectedFile || isUploading || status?.knowledge_base_status === 'processing'}
-            className="w-full"
+            className="w-full text-sm md:text-base py-2 md:py-3"
+            size="sm"
           >
             {isUploading ? 'Uploading...' : 'Upload Knowledge Base'}
           </Button>
@@ -154,7 +155,7 @@ export function KnowledgeBaseManager({ bot, onBotUpdate }: KnowledgeBaseManagerP
 
         {status?.knowledge_base_status === 'processing' && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-            <p className="text-sm text-yellow-700">
+            <p className="text-xs md:text-sm text-yellow-700 leading-relaxed">
               📚 Processing your knowledge base... This may take a few minutes.
             </p>
           </div>
@@ -162,7 +163,7 @@ export function KnowledgeBaseManager({ bot, onBotUpdate }: KnowledgeBaseManagerP
 
         {status?.knowledge_base_status === 'ready' && (
           <div className="bg-green-50 border border-green-200 rounded-md p-3">
-            <p className="text-sm text-green-700">
+            <p className="text-xs md:text-sm text-green-700 leading-relaxed">
               ✅ Knowledge base is ready! Your bot can now answer questions based on your uploaded documents.
             </p>
           </div>
@@ -170,7 +171,7 @@ export function KnowledgeBaseManager({ bot, onBotUpdate }: KnowledgeBaseManagerP
 
         {status?.knowledge_base_status === 'failed' && (
           <div className="bg-red-50 border border-red-200 rounded-md p-3">
-            <p className="text-sm text-red-700">
+            <p className="text-xs md:text-sm text-red-700 leading-relaxed">
               ❌ Failed to process knowledge base. Please try uploading again or contact support.
             </p>
           </div>
@@ -178,7 +179,7 @@ export function KnowledgeBaseManager({ bot, onBotUpdate }: KnowledgeBaseManagerP
 
         {status?.knowledge_base_status === 'empty' && (
           <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-            <p className="text-sm text-blue-700">
+            <p className="text-xs md:text-sm text-blue-700 leading-relaxed">
               💡 No knowledge base uploaded yet. Upload a PDF to get started!
             </p>
           </div>

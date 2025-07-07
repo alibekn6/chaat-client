@@ -151,52 +151,54 @@ export function AgentDetailLayout() {
 
   return (
     <>
-      <div className="p-8 max-w-4xl mx-auto">
+      <div className="p-4 md:p-8 max-w-4xl mx-auto">
         <div className="mb-6">
           <Link to="/dashboard" className="text-blue-500 hover:underline">&larr; Back to Dashboard</Link>
         </div>
         
         <div className="bg-white rounded-lg shadow-md border flex flex-col mb-6">
-          <div className="p-6 mb-auto">
-            <div className="flex justify-between items-start mb-4">
-              <h1 className="text-3xl font-bold flex-grow">{bot.bot_name}</h1>
-              <div className="flex items-center gap-4">
+          <div className="p-4 md:p-6 mb-auto">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 gap-4">
+              <h1 className="text-xl md:text-3xl font-bold flex-grow break-words">{bot.bot_name}</h1>
+              <div className="flex items-center gap-2 md:gap-4 flex-wrap">
                 <StatusBadge status={bot.status} is_running={bot.is_running} />
                 {bot.status === 'created' && (
-                  <Button onClick={handleGenerate} disabled={isSubmitting}>
+                  <Button onClick={handleGenerate} disabled={isSubmitting} size="sm" className="md:h-10">
                     {isSubmitting ? 'Generating...' : 'Generate Code'}
                   </Button>
                 )}
                 {(bot.status === 'generated' || bot.status === 'stopped') && !bot.is_running && (
-                  <Button onClick={handleToggleBot} disabled={isSubmitting}>
+                  <Button onClick={handleToggleBot} disabled={isSubmitting} size="sm" className="md:h-10">
                     {isSubmitting ? 'Deploying...' : 'Deploy'}
                   </Button>
                 )}
                 {bot.is_running && (
-                  <Button variant="outline" onClick={handleToggleBot} disabled={isSubmitting}>
+                  <Button variant="outline" onClick={handleToggleBot} disabled={isSubmitting} size="sm" className="md:h-10">
                     {isSubmitting ? 'Stopping...' : 'Stop'}
                   </Button>
                 )}
               </div>
             </div>
-            <p className="mb-2"><span className="font-semibold">Requirements:</span> {bot.requirements}</p>
-            <p className="text-sm text-gray-500"><span className="font-semibold">Token:</span> {bot.bot_token.substring(0, 12)}...</p>
+            <div className="space-y-2">
+              <p className="text-sm md:text-base break-words"><span className="font-semibold">Requirements:</span> {bot.requirements}</p>
+              <p className="text-xs md:text-sm text-gray-500 break-all"><span className="font-semibold">Token:</span> {bot.bot_token.substring(0, 12)}...</p>
+            </div>
           </div>
-          <div className="p-4 border-t bg-gray-50 flex justify-end gap-2 rounded-b-lg">
+          <div className="p-3 md:p-4 border-t bg-gray-50 flex justify-end gap-2 rounded-b-lg">
             <Button variant="outline" size="sm" onClick={() => setIsModalOpen(true)}>Edit</Button>
             <Button variant="outline" size="sm" className="border-red-500 text-red-500 hover:bg-red-50" onClick={handleDeleteBot}>Delete</Button>
           </div>
         </div>
         
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold">Generated Code</h2>
+        <div className="mb-6">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-2">
+            <h2 className="text-xl md:text-2xl font-semibold">Generated Code</h2>
             {bot.generated_code && (
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={() => setIsCodeVisible(!isCodeVisible)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 self-start md:self-auto"
               >
                 {isCodeVisible ? (
                   <>
@@ -246,7 +248,7 @@ export function AgentDetailLayout() {
       </Modal>
 
       {bot.bot_type === BotType.QA_KNOWLEDGE_BASE && (
-        <div className="mt-6">
+        <div className="px-4 md:px-0">
           <KnowledgeBaseManager bot={bot} onBotUpdate={setBot} />
         </div>
       )}

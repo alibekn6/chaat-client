@@ -72,11 +72,11 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
   const isQABot = formData.bot_type === BotType.QA_KNOWLEDGE_BASE;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <h2 className="text-xl font-semibold">{formTitle}</h2>
+    <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 p-4 md:p-0">
+      <h2 className="text-lg md:text-xl font-semibold">{formTitle}</h2>
       
       <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="bot_name" className="text-left">Bot Name</Label>
+        <Label htmlFor="bot_name" className="text-left text-sm md:text-base">Bot Name</Label>
         <Input 
           type="text" 
           name="bot_name" 
@@ -85,17 +85,22 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
           onChange={handleChange} 
           required 
           placeholder="A public name for your Telegram bot" 
+          maxLength={35}
+          className="text-sm md:text-base"
         />
+        <p className="text-xs text-muted-foreground">
+          {formData.bot_name.length}/35 characters
+        </p>
       </div>
 
       <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="bot_type" className="text-left">Bot Type</Label>
+        <Label htmlFor="bot_type" className="text-left text-sm md:text-base">Bot Type</Label>
         <select 
           name="bot_type" 
           id="bot_type" 
           value={formData.bot_type} 
           onChange={handleChange}
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-xs md:text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           required
         >
           {BOT_TYPES.map((type) => (
@@ -104,13 +109,13 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
             </option>
           ))}
         </select>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
           {BOT_TYPES.find(type => type.value === formData.bot_type)?.description}
         </p>
       </div>
 
       <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="requirements" className="text-left">Requirements</Label>
+        <Label htmlFor="requirements" className="text-left text-sm md:text-base">Requirements</Label>
         <Textarea 
           name="requirements" 
           id="requirements" 
@@ -121,12 +126,13 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
             ? "Describe how your bot should respond to questions about your documents. Be specific about the tone and style!"
             : "Describe what your bot should do. Be specific about personality, tone, and behavior!"
           } 
-          rows={5} 
+          rows={4}
+          className="text-sm md:text-base resize-none"
         />
       </div>
       
       <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="bot_token" className="text-left">Telegram Token</Label>
+        <Label htmlFor="bot_token" className="text-left text-sm md:text-base">Telegram Token</Label>
         <Input 
           type="password" 
           name="bot_token" 
@@ -135,8 +141,9 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
           onChange={handleChange} 
           required 
           placeholder="Paste your token from BotFather" 
+          className="text-sm md:text-base font-mono"
         />
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
           Get your token by creating a bot with @BotFather on Telegram.{' '}
           <a 
             href="https://t.me/BotFather" 
@@ -160,29 +167,29 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
 
       {isQABot && !initialData && (
         <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="knowledge_file" className="text-left">Knowledge Base File (Optional)</Label>
+          <Label htmlFor="knowledge_file" className="text-left text-sm md:text-base">Knowledge Base File (Optional)</Label>
           <Input 
             type="file" 
             name="knowledge_file" 
             id="knowledge_file" 
             accept=".pdf"
             onChange={handleFileChange}
-            className="file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/80"
+            className="file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs md:file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/80"
           />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
             Upload a PDF file that contains information your bot should know about. You can also upload this later.
           </p>
           {selectedFile && (
-            <p className="text-sm text-green-600">
+            <p className="text-xs md:text-sm text-green-600 break-words">
               Selected: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
             </p>
           )}
         </div>
       )}
 
-      <div className="flex justify-end gap-4 pt-4">
-        <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
-        <Button type="submit" disabled={isSubmitting}>
+      <div className="flex flex-col md:flex-row justify-end gap-2 md:gap-4 pt-4">
+        <Button type="button" variant="outline" onClick={onCancel} size="sm" className="md:h-10">Cancel</Button>
+        <Button type="submit" disabled={isSubmitting} size="sm" className="md:h-10">
           {isSubmitting ? 'Creating...' : submitButtonText}
         </Button>
       </div>
