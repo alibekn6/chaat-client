@@ -14,10 +14,10 @@ interface KnowledgeBaseManagerProps {
 }
 
 const STATUS_COLORS = {
-  empty: 'bg-gray-500',
-  processing: 'bg-yellow-500',
-  ready: 'bg-green-500',
-  failed: 'bg-red-500',
+  empty: 'bg-gray-100 text-gray-800',
+  processing: 'bg-yellow-100 text-yellow-800',
+  ready: 'bg-green-100 text-green-800',
+  failed: 'bg-red-100 text-red-800',
 };
 
 const STATUS_LABELS = {
@@ -112,10 +112,10 @@ export function KnowledgeBaseManager({ bot, onBotUpdate }: KnowledgeBaseManagerP
   return (
     <Card className="p-4 md:p-8">
       <div className="space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+        <div className="flex items-center justify-between gap-2">
           <h3 className="text-lg font-semibold">Knowledge Base</h3>
           {status && (
-            <Badge className={STATUS_COLORS[status.knowledge_base_status]}>
+            <Badge className={`${STATUS_COLORS[status.knowledge_base_status]} text-xs md:text-sm`}>
               {STATUS_LABELS[status.knowledge_base_status]}
             </Badge>
           )}
