@@ -1,5 +1,5 @@
 import api from './api';
-import type { Bot, CreateBotData, UpdateBotData, KnowledgeBaseStatus } from '../types/bot';
+import type { Bot, CreateBotData, UpdateBotData, KnowledgeBaseStatus, KnowledgeBaseFile } from '../types/bot';
 
 export const botService = {
   async getBots(): Promise<Bot[]> {
@@ -55,6 +55,16 @@ export const botService = {
 
   async getKnowledgeBaseStatus(botId: number): Promise<KnowledgeBaseStatus> {
     const response = await api.get<KnowledgeBaseStatus>(`/ai/bots/${botId}/knowledge/status`);
+    return response.data;
+  },
+
+  async getKnowledgeBaseFiles(botId: number): Promise<KnowledgeBaseFile[]> {
+    const response = await api.get<KnowledgeBaseFile[]>(`/ai/bots/${botId}/knowledge/files`);
+    return response.data;
+  },
+
+  async deleteKnowledgeBaseFile(botId: number, fileId: string): Promise<{ message: string }> {
+    const response = await api.delete<{ message: string }>(`/ai/bots/${botId}/knowledge/files/${fileId}`);
     return response.data;
   },
 }; 

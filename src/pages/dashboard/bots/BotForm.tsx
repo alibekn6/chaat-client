@@ -87,6 +87,7 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
           placeholder="A public name for your Telegram bot" 
           maxLength={35}
           className="text-sm md:text-base"
+          autoComplete="off"
         />
         <p className="text-xs text-muted-foreground">
           {formData.bot_name.length}/35 characters
@@ -128,6 +129,7 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
           } 
           rows={4}
           className="text-sm md:text-base resize-none"
+          autoComplete="off"
         />
       </div>
       
@@ -142,6 +144,7 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
           required 
           placeholder="Paste your token from BotFather" 
           className="text-sm md:text-base font-mono"
+          autoComplete="new-password"
         />
         <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
           Get your token by creating a bot with @BotFather on Telegram.{' '}
@@ -180,7 +183,7 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
             Upload a PDF file that contains information your bot should know about. You can also upload this later.
           </p>
           {selectedFile && (
-            <p className="text-xs md:text-sm text-green-600 break-words">
+            <p className="text-xs md:text-sm text-gray-600 break-words">
               Selected: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
             </p>
           )}

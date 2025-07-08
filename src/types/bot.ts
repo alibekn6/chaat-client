@@ -34,4 +34,13 @@ export interface KnowledgeBaseStatus {
   bot_id: number;
   knowledge_base_status: 'empty' | 'processing' | 'ready' | 'failed';
   bot_type: BotType;
+}
+
+export interface KnowledgeBaseFile {
+  id: string;
+  filename: string;
+  original_name: string;
+  file_size: number;
+  upload_date: string;
+  status: 'ready' | 'processing' | 'failed';
 } 
