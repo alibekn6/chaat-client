@@ -158,26 +158,43 @@ export function AgentDetailLayout() {
         
         <div className="bg-white rounded-lg shadow-md border flex flex-col mb-6">
           <div className="p-4 md:p-6 mb-auto">
-            <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 gap-4">
+            <div className="flex justify-between items-start mb-4">
               <h1 className="text-xl md:text-3xl font-bold flex-grow break-words">{bot.bot_name}</h1>
-              <div className="flex items-center gap-2 md:gap-4 flex-wrap">
+              <div className="flex items-center gap-2">
                 <StatusBadge status={bot.status} is_running={bot.is_running} />
                 {bot.status === 'created' && (
-                  <Button onClick={handleGenerate} disabled={isSubmitting} size="sm" className="md:h-10">
+                  <Button onClick={handleGenerate} disabled={isSubmitting} className="hidden md:inline-flex px-4 py-2">
                     {isSubmitting ? 'Generating...' : 'Generate Code'}
                   </Button>
                 )}
                 {(bot.status === 'generated' || bot.status === 'stopped') && !bot.is_running && (
-                  <Button onClick={handleToggleBot} disabled={isSubmitting} size="sm" className="md:h-10">
+                  <Button onClick={handleToggleBot} disabled={isSubmitting} className="hidden md:inline-flex px-4 py-2">
                     {isSubmitting ? 'Deploying...' : 'Deploy'}
                   </Button>
                 )}
                 {bot.is_running && (
-                  <Button variant="outline" onClick={handleToggleBot} disabled={isSubmitting} size="sm" className="md:h-10">
+                  <Button variant="outline" onClick={handleToggleBot} disabled={isSubmitting} className="hidden md:inline-flex px-4 py-2">
                     {isSubmitting ? 'Stopping...' : 'Stop'}
                   </Button>
                 )}
               </div>
+            </div>
+            <div className="flex flex-col gap-2 mb-4 md:hidden">
+              {bot.status === 'created' && (
+                <Button onClick={handleGenerate} disabled={isSubmitting} className="w-full">
+                  {isSubmitting ? 'Generating...' : 'Generate Code'}
+                </Button>
+              )}
+              {(bot.status === 'generated' || bot.status === 'stopped') && !bot.is_running && (
+                <Button onClick={handleToggleBot} disabled={isSubmitting} className="w-full">
+                  {isSubmitting ? 'Deploying...' : 'Deploy'}
+                </Button>
+              )}
+              {bot.is_running && (
+                <Button variant="outline" onClick={handleToggleBot} disabled={isSubmitting} className="w-full">
+                  {isSubmitting ? 'Stopping...' : 'Stop'}
+                </Button>
+              )}
             </div>
             <div className="space-y-2">
               <p className="text-sm md:text-base break-words"><span className="font-semibold">Requirements:</span> {bot.requirements}</p>
