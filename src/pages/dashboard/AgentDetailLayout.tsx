@@ -7,6 +7,7 @@ import type { Bot, UpdateBotData } from '../../types/bot';
 import { BotType } from '../../types/bot';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
+import { Tabs } from '../../components/ui/tabs';
 import { Modal } from './bots/Modal';
 import { BotForm } from './bots/BotForm';
 import { KnowledgeBaseManager } from './bots/KnowledgeBaseManager';
@@ -207,52 +208,82 @@ export function AgentDetailLayout() {
           </div>
         </div>
         
-        <div className="mb-6">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-2">
-            <h2 className="text-xl md:text-2xl font-semibold">Generated Code</h2>
-            {bot.generated_code && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setIsCodeVisible(!isCodeVisible)}
-                className="flex items-center gap-2 self-start md:self-auto"
-              >
-                {isCodeVisible ? (
-                  <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                    Hide Code
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                    Show Code
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
-          
-          {bot.generated_code ? (
-            isCodeVisible ? (
-              <SyntaxHighlighter language="python" style={vscDarkPlus} showLineNumbers>
-                {bot.generated_code}
-              </SyntaxHighlighter>
-            ) : (
-              <div className="bg-gray-100 border rounded-lg p-6 text-center text-gray-500">
-                <svg className="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-                <p>Click "Show Code" to view the generated code</p>
-              </div>
-            )
-          ) : (
-            <p className="text-gray-500">Code has not been generated for this bot yet.</p>
-          )}
-        </div>
+        <Tabs
+          defaultTab="code"
+          tabs={[
+            {
+              id: 'code',
+              label: 'Code',
+              content: (
+                <div className="space-y-4">
+                  {bot.generated_code ? (
+                    <div className="space-y-4">
+                      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
+                        <h3 className="text-lg font-semibold">Generated Code</h3>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setIsCodeVisible(!isCodeVisible)}
+                          className="flex items-center gap-2 self-start md:self-auto"
+                        >
+                          {isCodeVisible ? (
+                            <>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                              </svg>
+                              Hide Code
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                              Show Code
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      
+                      {isCodeVisible ? (
+                        <SyntaxHighlighter language="python" style={vscDarkPlus} showLineNumbers>
+                          {bot.generated_code}
+                        </SyntaxHighlighter>
+                      ) : (
+                        <div className="bg-gray-100 border rounded-lg p-6 text-center text-gray-500">
+                          <svg className="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                          </svg>
+                          <p>Click "Show Code" to view the generated code</p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                      </svg>
+                      <p className="text-gray-500 text-lg">Code has not been generated for this bot yet.</p>
+                    </div>
+                  )}
+                </div>
+              )
+            },
+            {
+              id: 'knowledge-base',
+              label: 'Knowledge Base',
+              content: bot.bot_type === BotType.QA_KNOWLEDGE_BASE ? (
+                <KnowledgeBaseManager bot={bot} onBotUpdate={setBot} />
+              ) : (
+                <div className="text-center py-8">
+                  <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.168 18.477 18.582 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                  <p className="text-gray-500 text-lg">Knowledge base is only available for Q&A bots.</p>
+                </div>
+              )
+            }
+          ]}
+        />
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -263,12 +294,6 @@ export function AgentDetailLayout() {
           isSubmitting={isSubmitting}
         />
       </Modal>
-
-      {bot.bot_type === BotType.QA_KNOWLEDGE_BASE && (
-        <div className="px-4 md:px-0">
-          <KnowledgeBaseManager bot={bot} onBotUpdate={setBot} />
-        </div>
-      )}
     </>
   );
 } 
