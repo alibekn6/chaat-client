@@ -154,7 +154,7 @@ export function DashboardHomePage() {
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">My bots</h1>
+        <h1 className="text-2xl font-mono font-bold">My bots</h1>
         <Button onClick={handleOpenCreateModal}>Create New Bot</Button>
       </div>
       
@@ -193,7 +193,7 @@ export function DashboardHomePage() {
                         onClick={(e) => { e.preventDefault(); handleGenerate(bot.id); }}
                         disabled={bot.bot_type === BotType.QA_KNOWLEDGE_BASE && bot.knowledge_base_status !== 'ready'}
                       >
-                        Generate Code
+                        Generate
                       </Button>
                     )}
                     {(bot.status === 'generated' || bot.status === 'stopped') && !bot.is_running && (

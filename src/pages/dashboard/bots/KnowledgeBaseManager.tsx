@@ -35,7 +35,7 @@ export function KnowledgeBaseManager({ bot, onBotUpdate }: KnowledgeBaseManagerP
   const [isDeletingFile, setIsDeletingFile] = useState<string | null>(null);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const isQABot = bot.bot_type === BotTypeConstants.QA_KNOWLEDGE_BASE;
+  const isQABot = bot.bot_type === BotTypeConstants.QA_KNOWLEDGE_BASE || bot.bot_type === BotTypeConstants.QA_FEEDBACK_BOT;
 
   useEffect(() => {
     if (isQABot) {

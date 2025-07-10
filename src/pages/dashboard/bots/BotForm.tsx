@@ -23,6 +23,11 @@ const BOT_TYPES = [
     value: BotType.QA_KNOWLEDGE_BASE,
     label: "Q&A Knowledge Base Bot",
     description: "Answer questions based on uploaded PDF documents"
+  },
+  {
+    value: BotType.QA_FEEDBACK_BOT,
+    label: "Q&A + Feedback Bot",
+    description: "Answer questions with PDF documents and collect customer feedback with ratings"
   }
 ];
 
@@ -69,7 +74,7 @@ export function BotForm({ initialData, onSubmit, onCancel, isSubmitting }: BotFo
 
   const formTitle = initialData ? 'Edit Bot' : 'Create New Bot';
   const submitButtonText = initialData ? 'Save Changes' : 'Create Bot';
-  const isQABot = formData.bot_type === BotType.QA_KNOWLEDGE_BASE;
+  const isQABot = formData.bot_type === BotType.QA_KNOWLEDGE_BASE || formData.bot_type === BotType.QA_FEEDBACK_BOT;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 p-4 md:p-0">

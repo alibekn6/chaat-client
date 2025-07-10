@@ -1,6 +1,7 @@
 export const BotType = {
   SIMPLE_CHAT: "simple_chat",
   QA_KNOWLEDGE_BASE: "qa_knowledge_base",
+  QA_FEEDBACK_BOT: "qa_feedback",
 } as const;
 
 export type BotType = typeof BotType[keyof typeof BotType];
@@ -13,7 +14,7 @@ export interface Bot {
   bot_token: string;
   bot_type: BotType;
   generated_code: string | null;
-  status: 'created' | 'generated' | 'running' | 'stopped' | 'error';
+  status: 'created' | 'generating' | 'ready' | 'deployed' | 'stopped' | 'error';
   is_running: boolean;
   created_at: string;
   pid: number | null;
