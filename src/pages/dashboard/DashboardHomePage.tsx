@@ -16,7 +16,7 @@ const StatusBadge = ({ status, is_running }: { status: Bot['status'], is_running
   if (is_running) {
     color = 'bg-green-500';
     text = 'Running';
-  } else if (status === 'generated' || status === 'stopped') {
+  } else if (status === 'ready' || status === 'stopped') {
     color = 'bg-blue-500';
   } else if (status === 'error') {
     color = 'bg-red-500';
