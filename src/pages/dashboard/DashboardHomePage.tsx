@@ -85,8 +85,12 @@ export function DashboardHomePage() {
       } else {
         createdBot = await botService.createBot(data as CreateBotData);
         
-        // If this is a Q&A bot and a file was provided, upload it
-        if (file && (data as CreateBotData).bot_type === BotType.QA_KNOWLEDGE_BASE) {
+        // If this is a Q&A bot (knowledge base or feedback) and a file was provided, upload it
+        if (
+          file &&
+          ((data as CreateBotData).bot_type === BotType.QA_KNOWLEDGE_BASE ||
+            (data as CreateBotData).bot_type === BotType.QA_FEEDBACK_BOT)
+        ) {
           try {
             await botService.uploadKnowledgeBase(createdBot.id, file);
           } catch (fileUploadError) {
@@ -196,7 +200,7 @@ export function DashboardHomePage() {
                         Generate
                       </Button>
                     )}
-                    {(bot.status === 'generated' || bot.status === 'stopped') && !bot.is_running && (
+                    {(['ready', 'stopped'].includes(bot.status) && !bot.is_running) && (
                       <Button onClick={(e) => { e.preventDefault(); handleDeploy(bot.id); }}>Deploy</Button>
                     )}
                     {bot.is_running && (

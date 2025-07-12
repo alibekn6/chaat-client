@@ -67,4 +67,17 @@ export const botService = {
     const response = await api.delete<{ message: string }>(`/ai/bots/${botId}/knowledge/files/${fileId}`);
     return response.data;
   },
+
+  async getLink(token: string): Promise<string> {
+    // Call Telegram API to get bot info and extract username
+    const response = await fetch(`https://api.telegram.org/bot${token}/getMe`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch bot info from Telegram');
+    }
+    const data = await response.json();
+    if (!data.ok || !data.result || !data.result.username) {
+      throw new Error('Invalid response from Telegram API');
+    }
+    return data.result.username;
+  }
 }; 

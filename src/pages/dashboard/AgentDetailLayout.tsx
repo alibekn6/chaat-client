@@ -37,6 +37,7 @@ export function AgentDetailLayout() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCodeVisible, setIsCodeVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchBot = async () => {
@@ -127,6 +128,17 @@ export function AgentDetailLayout() {
     }
   };
 
+  const [botLink, setBotLink] = useState("");
+
+  useEffect(() => {
+    const fetchLink = async () => {
+      if (!bot) return;
+      const link = await botService.getLink(bot.bot_token);
+      setBotLink(link);
+    };
+    fetchLink();
+  }, [bot]);
+
   if (loading) {
     return (
       <div className="p-8 max-w-4xl mx-auto">
@@ -161,7 +173,7 @@ export function AgentDetailLayout() {
         <div className="bg-white rounded-lg shadow-md border flex flex-col mb-6">
           <div className="p-4 md:p-6 mb-auto">
             <div className="flex justify-between items-start mb-4">
-              <h1 className="text-xl md:text-3xl font-bold flex-grow break-words">{bot.bot_name}</h1>
+              <h1 className="text-xl md:text-3xl font-bold flex-grow break-words"><a href={`https://t.me/${botLink}`} target='_blank' rel="noopener noreferrer">{bot.bot_name}</a></h1>
               <div className="flex items-center gap-2">
                 <StatusBadge status={bot.status} is_running={bot.is_running} />
                 {bot.status === 'created' && (
@@ -200,7 +212,30 @@ export function AgentDetailLayout() {
             </div>
             <div className="space-y-2">
               <p className="text-sm md:text-base break-words"><span className="font-semibold">Requirements:</span> {bot.requirements}</p>
-              <p className="text-xs md:text-sm text-gray-500 break-all"><span className="font-semibold">Token:</span> {bot.bot_token.substring(0, 12)}...</p>
+              <p className="text-xs md:text-sm text-gray-500 break-all">
+                <span className="font-semibold">Token:</span> ...{bot.bot_token.slice(-6)}
+              </p>
+
+              {/* Center the copy-to-clipboard CTA */}
+              <div className="flex justify-center my-4">
+                <button
+                  type="button"
+                  className="font-mono bg-gray-100 px-3 py-1 rounded text-blue-700 hover:bg-blue-50 border border-gray-200 transition flex items-center gap-2"
+                  style={{ cursor: 'pointer' }}
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(`https://t.me/${botLink}`);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 1500);
+                  }}
+                >
+                  <span>{`https://t.me/${botLink}`}</span>
+                  {copied ? (
+                    <span className="text-green-600 text-xs ml-2">Copied!</span>
+                  ) : (
+                    <svg className="w-4 h-4 ml-1 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" strokeWidth="2" stroke="currentColor" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" strokeWidth="2" stroke="currentColor" fill="none"/></svg>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
           <div className="p-3 md:p-4 border-t bg-gray-50 flex justify-end gap-2 rounded-b-lg">
