@@ -53,11 +53,27 @@ export function DashboardHomePage() {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBot, setEditingBot] = useState<Bot | null>(null);
+  const [generatingBotId, setGeneratingBotId] = useState<number | null>(null);
+  const [dots, setDots] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     loadBots();
   }, []);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (generatingBotId !== null) {
+      interval = setInterval(() => {
+        setDots((prev) => (prev.length >= 3 ? '' : prev + '.'));
+      }, 500);
+    } else {
+      setDots('');
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [generatingBotId]);
 
   async function loadBots() {
     try {
@@ -123,12 +139,15 @@ export function DashboardHomePage() {
   };
 
   const handleGenerate = async (botId: number) => {
+    setGeneratingBotId(botId);
     try {
       await botService.generateBotCode(botId);
       await loadBots();
     } catch (err) {
       setError(`Failed to generate code for bot ${botId}.`);
       console.error(err);
+    } finally {
+      setGeneratingBotId(null);
     }
   };
 
@@ -208,9 +227,9 @@ export function DashboardHomePage() {
                     {bot.status === 'created' && (
                       <Button 
                         onClick={(e) => { e.preventDefault(); handleGenerate(bot.id); }}
-                        disabled={bot.bot_type === BotType.QA_KNOWLEDGE_BASE && bot.knowledge_base_status !== 'ready'}
+                        disabled={bot.bot_type === BotType.QA_KNOWLEDGE_BASE && bot.knowledge_base_status !== 'ready' || generatingBotId !== null}
                       >
-                        Generate
+                        {generatingBotId === bot.id ? `Generating${dots}` : 'Generate'}
                       </Button>
                     )}
                     {(['ready', 'generated', 'stopped'].includes(bot.status) && !bot.is_running) && (
