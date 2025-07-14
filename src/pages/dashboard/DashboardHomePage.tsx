@@ -26,10 +26,23 @@ const StatusBadge = ({ status, is_running }: { status: Bot['status'], is_running
 };
 
 const BotTypeBadge = ({ botType }: { botType: Bot['bot_type'] }) => {
-  const isQABot = botType === BotType.QA_KNOWLEDGE_BASE;
+  let label = '';
+  let icon = '';
+  if (botType === BotType.SIMPLE_CHAT) {
+    label = 'Chat Bot';
+    icon = '💬';
+  } else if (botType === BotType.QA_KNOWLEDGE_BASE) {
+    label = 'Q&A Bot';
+    icon = '📚';
+  } else if (botType === BotType.QA_FEEDBACK_BOT) {
+    label = 'Q&A + Feedback Bot';
+    icon = '⭐';
+  } else {
+    label = botType;
+  }
   return (
     <Badge className="text-xs bg-blue-100 text-blue-800">
-      {isQABot ? '📚 Q&A Bot' : '💬 Chat Bot'}
+      {icon ? `${icon} ${label}` : label}
     </Badge>
   );
 };
