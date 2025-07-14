@@ -38,6 +38,21 @@ export function AgentDetailLayout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCodeVisible, setIsCodeVisible] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [dots, setDots] = useState<string>('');
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isSubmitting) {
+      interval = setInterval(() => {
+        setDots((prev) => (prev.length >= 3 ? '' : prev + '.'));
+      }, 500);
+    } else {
+      setDots('');
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isSubmitting]);
 
   useEffect(() => {
     const fetchBot = async () => {
@@ -178,7 +193,7 @@ export function AgentDetailLayout() {
                 <StatusBadge status={bot.status} is_running={bot.is_running} />
                 {bot.status === 'created' && (
                   <Button onClick={handleGenerate} disabled={isSubmitting} className="hidden md:inline-flex px-4 py-2">
-                    {isSubmitting ? 'Generating...' : 'Generate'}
+                    {isSubmitting ? `Generating${dots}` : 'Generate'}
                   </Button>
                 )}
                 {(['ready', 'generated', 'stopped'].includes(bot.status) && !bot.is_running) && (
@@ -196,7 +211,7 @@ export function AgentDetailLayout() {
             <div className="flex flex-col gap-2 mb-4 md:hidden">
               {bot.status === 'created' && (
                 <Button onClick={handleGenerate} disabled={isSubmitting} className="w-full">
-                  {isSubmitting ? 'Generating...' : 'Generate'}
+                  {isSubmitting ? `Generating${dots}` : 'Generate'}
                 </Button>
               )}
               {(['ready', 'generated', 'stopped'].includes(bot.status) && !bot.is_running) && (
