@@ -126,22 +126,25 @@ export function FeedbackCard({
               Attached Images ({feedback.images.length})
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {feedback.images.map((image) => (
-                <div
-                  key={image.id}
-                  className="relative group cursor-pointer overflow-hidden rounded-lg border"
-                  onClick={() =>
-                    setSelectedImage(`${API_CONFIG.BASE_URL}${image.file_path}`)
-                  }
-                >
-                  <img
-                    src={`${API_CONFIG.BASE_URL}${image.file_path}`}
-                    alt={image.original_filename}
-                    className="w-full h-full max-h-screen object-cover transition-transform group-hover:scale-105"
-                  />
-                  {/* <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity" /> */}
-                </div>
-              ))}
+              {feedback.images.map((image) => {
+                // Determine the correct image URL based on storage_type
+                const imageUrl = image.storage_type === "azure"
+                  ? image.file_path
+                  : `${API_CONFIG.BASE_URL}${image.file_path}`;
+                return (
+                  <div
+                    key={image.id}
+                    className="relative group cursor-pointer overflow-hidden rounded-lg border"
+                    onClick={() => setSelectedImage(imageUrl)}
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={image.original_filename}
+                      className="w-full h-full max-h-screen object-cover transition-transform group-hover:scale-105"
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
