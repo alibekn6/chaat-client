@@ -213,7 +213,7 @@ export function DashboardHomePage() {
                         Generate
                       </Button>
                     )}
-                    {(['ready', 'stopped'].includes(bot.status) && !bot.is_running) && (
+                    {(['ready', 'generated', 'stopped'].includes(bot.status) && !bot.is_running) && (
                       <Button onClick={(e) => { e.preventDefault(); handleDeploy(bot.id); }}>Deploy</Button>
                     )}
                     {bot.is_running && (
