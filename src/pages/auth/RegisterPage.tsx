@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { register } from '../../services/authService'
 import { Button } from '../../components/ui/button'
+import { GoogleLoginButton } from '../../components/ui/GoogleLoginButton'
 
 export function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -98,7 +99,7 @@ export function RegisterPage() {
     <div className="flex justify-center items-center flex-grow mb-40 mt-20">
       <form
         onSubmit={handleSubmit}
-        className="p-8 bg-white shadow-md rounded-lg"
+        className="p-8 bg-white shadow-md rounded-lg w-full max-w-md border border-gray-200"
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
@@ -168,6 +169,12 @@ export function RegisterPage() {
         >
           {isSubmitting ? 'Registering...' : 'Register'}
         </Button>
+        <div className="flex items-center my-4">
+          <div className="flex-grow border-t border-gray-200"></div>
+          <span className="mx-2 text-gray-400 text-xs font-mono">or</span>
+          <div className="flex-grow border-t border-gray-200"></div>
+        </div>
+        <GoogleLoginButton buttonText="Sign in with Google" />
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{' '}
           <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">

@@ -63,3 +63,23 @@ export const verifyEmail = async (token: string): Promise<EmailVerificationRespo
     throw new Error('An error occurred during email verification');
   }
 }; 
+
+export const googleAuth = async (code: string) => {
+  try {
+    const response = await api.post('/auth/google', { code });
+    return response.data;
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { data?: { detail?: string }; status?: number }; code?: string };
+      if (axiosError.response?.data?.detail) {
+        const detail = axiosError.response.data.detail;
+        throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail));
+      } else if (axiosError.response?.status === 400) {
+        throw new Error('Invalid or expired Google code');
+      } else if (axiosError.code === 'ECONNABORTED') {
+        throw new Error('Request timeout. Please check your connection');
+      }
+    }
+    throw new Error('An error occurred during Google authentication');
+  }
+}; 

@@ -13,7 +13,6 @@ import { BotForm } from './bots/BotForm';
 import { KnowledgeBaseManager } from './bots/KnowledgeBaseManager';
 import { FeedbackManagementPage } from './bots/FeedbackManagementPage';
 
-// Helper for status badge, consistent with dashboard
 const StatusBadge = ({ status, is_running }: { status: Bot['status'], is_running: boolean }) => {
   let color = 'bg-gray-500';
   let text = status.charAt(0).toUpperCase() + status.slice(1);
@@ -231,7 +230,6 @@ export function AgentDetailLayout() {
                 <span className="font-semibold">Token:</span> ...{bot.bot_token.slice(-6)}
               </p>
 
-              {/* Center the copy-to-clipboard CTA */}
               <div className="flex justify-center my-4">
                 <button
                   type="button"
