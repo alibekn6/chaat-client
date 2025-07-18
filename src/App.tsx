@@ -14,7 +14,9 @@ const RegisterPage = lazy(() => import('./pages/auth/RegisterPage').then(module 
 const VerifyEmailPage = lazy(() => import('./pages/auth/VerifyEmailPage').then(module => ({ default: module.VerifyEmailPage })))
 const DashboardHomePage = lazy(() => import('./pages/dashboard/DashboardHomePage').then(module => ({ default: module.DashboardHomePage })))
 const AgentDetailLayout = lazy(() => import('./pages/dashboard/AgentDetailLayout').then(module => ({ default: module.AgentDetailLayout })))
-const GoogleOAuthCallbackPage = lazy(() => import('./pages/auth/GoogleOAuthCallbackPage').then(module => ({ default: module.GoogleOAuthCallbackPage })));
+const GoogleOAuthCallbackPage = lazy(() => import('./pages/auth/GoogleOAuthCallbackPage').then(module => ({ default: module.GoogleOAuthCallbackPage })))
+const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })))
+const TermsOfService = lazy(() => import('./pages/legal/TermsOfService').then(module => ({ default: module.TermsOfService })))
 
 // Loading компонент
 const PageLoader = () => (
@@ -37,6 +39,8 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/auth/google/callback" element={<GoogleOAuthCallbackPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<DashboardHomePage />} />
               <Route path="/dashboard/:botId" element={<AgentDetailLayout />} />

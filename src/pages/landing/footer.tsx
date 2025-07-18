@@ -62,9 +62,8 @@ export const Footer = () => {
         <div className="border-t border-gray-200 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-600 text-sm text-center md:text-left">&copy; 2025 reeply. All rights reserved.</p>
           <div className="flex flex-wrap justify-center md:justify-end items-center gap-4 md:space-x-6 mt-3 md:mt-0 text-gray-600 text-sm">
-            {['Privacy Policy','Terms of Service'].map(text => (
-              <a key={text} href="#" className="hover:text-gray-900 transition">{text}</a>
-            ))}
+            <a href="/privacy-policy" className="hover:text-gray-900 transition">Privacy Policy</a>
+            <a href="/terms-of-service" className="hover:text-gray-900 transition">Terms of Service</a>
           </div>
         </div>
       </div>
