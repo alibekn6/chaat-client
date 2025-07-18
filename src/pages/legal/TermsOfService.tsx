@@ -15,7 +15,7 @@ export const TermsOfService: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Acceptance of Terms</h2>
               <p className="text-gray-700 mb-4">
-                By accessing and using Chaat ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+                By accessing and using Reeply ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
               </p>
               <p className="text-gray-700 mb-4">
                 These Terms of Service ("Terms") govern your use of our AI-powered chatbot generation service, which automatically creates customized chatbots for businesses based on provided information.
@@ -25,7 +25,7 @@ export const TermsOfService: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Description of Service</h2>
               <p className="text-gray-700 mb-4">
-                Chaat provides an AI-powered platform that:
+              Reeply provides an AI-powered platform that:
               </p>
               <ul className="list-none pl-0 mb-4 text-gray-700">
                 <li>Automatically generates customized chatbots for businesses</li>
@@ -110,7 +110,7 @@ export const TermsOfService: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Intellectual Property Rights</h2>
               <p className="text-gray-700 mb-4">
-                <strong>Our Rights:</strong> The Service and its original content, features, and functionality are owned by Chaat and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
+                <strong>Our Rights:</strong> The Service and its original content, features, and functionality are owned by Reeply and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
               </p>
               <p className="text-gray-700 mb-4">
                 <strong>Your Rights:</strong> You retain ownership of your business information and content. However, you grant us a limited license to use this information to provide our Service.
@@ -165,7 +165,7 @@ export const TermsOfService: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">11. Limitation of Liability</h2>
               <p className="text-gray-700 mb-4">
-                TO THE MAXIMUM EXTENT PERMITTED BY LAW, CHAAT SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO:
+                TO THE MAXIMUM EXTENT PERMITTED BY LAW, Reeply SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO:
               </p>
               <ul className="list-none pl-0 mb-4 text-gray-700">
                 <li>Loss of profits, data, or business opportunities</li>
@@ -195,7 +195,7 @@ export const TermsOfService: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">13. Indemnification</h2>
               <p className="text-gray-700 mb-4">
-                You agree to indemnify and hold harmless Chaat, its officers, directors, employees, and agents from and against any claims, damages, losses, and expenses (including reasonable attorneys' fees) arising out of or relating to:
+                You agree to indemnify and hold harmless Reeply, its officers, directors, employees, and agents from and against any claims, damages, losses, and expenses (including reasonable attorneys' fees) arising out of or relating to:
               </p>
               <ul className="list-none pl-0 mb-4 text-gray-700">
                 <li>Your use of the Service</li>
@@ -241,7 +241,7 @@ export const TermsOfService: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">17. Entire Agreement</h2>
               <p className="text-gray-700 mb-4">
-                These Terms, together with our Privacy Policy, constitute the entire agreement between you and Chaat regarding the Service and supersede all prior agreements and understandings.
+                These Terms, together with our Privacy Policy, constitute the entire agreement between you and Reeply regarding the Service and supersede all prior agreements and understandings.
               </p>
             </section>
 
@@ -267,7 +267,7 @@ export const TermsOfService: React.FC = () => {
               </p>
               <div className="bg-gray-100 p-4 rounded-lg">
                 <p className="text-gray-700">
-                  <strong>Email:</strong> legal@chaat.com<br />
+                  <strong>Email:</strong> legal@Reeply.com<br />
                   <strong>Address:</strong> Kazakhstan, Almaty, Satbayev 22<br />
                   <strong>Phone:</strong> +77056146518
                 </p>
