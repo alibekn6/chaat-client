@@ -15,6 +15,12 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    
+    // Debug logging for Google auth requests
+    if (config.url?.includes('/auth/google')) {
+      // Silent logging for production
+    }
+    
     return config
   },
   (error) => {

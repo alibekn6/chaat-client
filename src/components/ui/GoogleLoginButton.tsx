@@ -14,6 +14,16 @@ export const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
 
   const handleGoogleLogin = () => {
     setLoading(true)
+    
+    // Debug logging
+    console.log('🔍 Google OAuth Debug Info:')
+    console.log('Client ID:', clientId)
+    console.log('Redirect URI:', redirectUri)
+    console.log('Environment variables loaded:', {
+      VITE_GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      VITE_GOOGLE_REDIRECT_URI: import.meta.env.VITE_GOOGLE_REDIRECT_URI
+    })
+    
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: redirectUri,
@@ -22,7 +32,11 @@ export const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
       access_type: 'offline',
       prompt: 'consent',
     })
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`
+    
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`
+    console.log('🔗 Full OAuth URL:', authUrl)
+    
+    window.location.href = authUrl
   }
 
   return (

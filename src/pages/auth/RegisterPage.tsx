@@ -1,8 +1,9 @@
-import { useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, type FormEvent, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { register } from '../../services/authService'
 import { Button } from '../../components/ui/button'
 import { GoogleLoginButton } from '../../components/ui/GoogleLoginButton'
+import { useAuth } from '../../context/AuthContext'
 
 export function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -11,6 +12,15 @@ export function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
+  const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
